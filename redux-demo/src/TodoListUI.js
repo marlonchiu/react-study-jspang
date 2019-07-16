@@ -3,6 +3,9 @@ import 'antd/dist/antd.css'
 import { Input, Button, List } from 'antd'
 
 // 无状态组件
+// React中的无状态组件，如果是以前没有Redux的时候，实现分离是比较困难的，
+// 但是现在我们作项目，一定想着找个组件是否可以作成无状态组件。
+// 如果能做成无状态组件就尽量作成无状态组件，毕竟性能要高很多。
 
 const TodoListUI = (props) => {
     return ( 
