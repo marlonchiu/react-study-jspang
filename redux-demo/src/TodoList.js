@@ -6,7 +6,7 @@ import {
     changeInputAction,
     addItemAction, 
     deleteItemAction,
-    getTodoList
+    getMyListAction
 } from './store/actionCreators'
 // import axios from 'axios'
 class TodoList extends Component {
@@ -25,8 +25,11 @@ class TodoList extends Component {
     }
 
     componentDidMount() {
-        const action = getTodoList()
+        const action = getMyListAction()
         store.dispatch(action)
+        console.log(action)
+        // const action = getTodoList()
+        // store.dispatch(action)
 
         // axios.get('https://www.easy-mock.com/mock/5d2dee54de00e614545eaff3/getList').then((res)=>{
         //     // console.log(res)
