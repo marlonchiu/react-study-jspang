@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Input, Button, List } from 'antd'
 import {connect} from 'react-redux'
-
+import {changeInputAction, addItemAction, deleteItemAction} from './store/actions'
 class TodoList extends Component {
 
     render() { 
@@ -13,11 +13,11 @@ class TodoList extends Component {
                     <Input
                         placeholder={inputValue}
                         style={{ width: '250px', marginRight: '10px' }}
-                        onChange={this.changeInputValue}
+                        onChange={this.props.changeInput}
                         value={inputValue}
                     />
                     <Button type="primary"
-                        onClick={this.handleAddItem}>增加</Button>
+                        onClick={this.props.handleAddItem}>增加</Button>
                 </div>
                 <div style={{width: '300px', marginTop: '10px',}}>
                     <List
@@ -26,27 +26,13 @@ class TodoList extends Component {
                         renderItem={
                             (item, index) =>
                                 <List.Item
-                                    onClick={() => {this.handleDeleteItem(index)}}
+                                    onClick={() => {this.props.handleDeleteItem(index)}}
                                 >{item}</List.Item>}
                     />
                 </div>
             </div>
             </div>
         );
-    }
-
-    // 监听改变
-    changeInputValue = () => {
-        
-    }
-
-    // 增减item
-    handleAddItem = () => {
-
-    }
-    // 删除item
-    handleDeleteItem = (index) => {
-        console.log(index)
     }
 }
 
@@ -55,11 +41,25 @@ class TodoList extends Component {
 //         inputValue : state.inputValue
 //     }
 // }
+const dispatchToProps = (dispatch) =>{
+    return {
+        changeInput(e){
+            const data = e.target.value
+            dispatch(changeInputAction(data))
+        },
+        handleAddItem() {
+            dispatch(addItemAction())
+        },
+        handleDeleteItem(index) {
+            dispatch(deleteItemAction(index))
+        }
 
+    }
+}
 export default connect(
     state => ({
         inputValue: state.inputValue, 
         list: state.list
     }),
-    {}
+    dispatchToProps
 )(TodoList)
