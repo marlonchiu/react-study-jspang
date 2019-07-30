@@ -1,13 +1,14 @@
 <template>
   <section class="container">
+    <img src="~static/images/rocket-illustration-full.png" alt="rocket">
     <div>
       <app-logo/>
-      <h1 class="title">
-        Hello Nuxt.js
-      </h1>
-      <h2 class="subtitle">
-        Nuxt.js project
-      </h2>
+      <ul>
+        <li><nuxt-link :to="{name:'index'}">HOME</nuxt-link></li>
+        <li><nuxt-link :to="{name:'about'}">ABOUT</nuxt-link></li>
+        <li><nuxt-link :to="{name:'news', params:{newsId:2235}}">NEWS</nuxt-link></li>
+        <li><nuxt-link :to="{name:'async'}">异步获取数据</nuxt-link></li>
+      </ul>
       <div class="links">
         <a
           href="https://nuxtjs.org/"
@@ -17,6 +18,8 @@
           href="https://github.com/nuxt/nuxt.js"
           target="_blank"
           class="button--grey">GitHub</a>
+          <a href="/about" class="button--grey">ABOUT</a>
+          <a href="/news" class="button--grey">NEWS</a>
       </div>
     </div>
   </section>
