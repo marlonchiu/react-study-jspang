@@ -1,36 +1,64 @@
 'use strict';
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 /** 
- * 对象
- *   Object.is( ) 对象比较 
- *   Object.assign( )合并对象
+ * Set() 数据结构
+ *   Set和Array 的区别是Set不允许内部有重复的值，如果有只显示一个，相当于去重。
+ *   虽然Set很像数组，但是他不是数组
  *  
  *  */
 
-// KEY值构建
-var key = 'skill';
-var obj = _defineProperty({}, key, 'web');
-console.log(obj.skill); // web
+// set s声明
+var setArr = new Set(['jspang', '技术胖', 'web', 'jspang']);
+console.log(setArr); // Set(3) {"jspang", "技术胖", "web"}
 
-var obj1 = { name: 'jspang' };
-var obj2 = { name: 'jspang' };
-console.log(obj1.name === obj2.name); //true
-console.log(Object.is(obj1.name, obj2.name)); //true
+// Set值的增删查  add delete has
+setArr.add('前端职场');
+console.log(setArr); // Set(4) {"jspang", "技术胖", "web", "前端职场"}
+setArr.delete('前端职场');
+console.log(setArr); // Set(3) {"jspang", "技术胖", "web"}
+console.log(setArr.has('jspang')); //true
+// 清除 clear()
+// setArr.clear();
+// console.log(setArray) // error setArray is not defined
 
-// ===为同值相等，is()为严格相等
-console.log(+0 === -0); //true
+// for... of... 循环
+var _iteratorNormalCompletion = true;
+var _didIteratorError = false;
+var _iteratorError = undefined;
 
-console.log(NaN === NaN); //false
+try {
+  for (var _iterator = setArr[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+    var item = _step.value;
 
-console.log(Object.is(+0, -0)); //false
+    console.log(item);
+  }
 
-console.log(Object.is(NaN, NaN)); //true
+  // size Set值的数量
+} catch (err) {
+  _didIteratorError = true;
+  _iteratorError = err;
+} finally {
+  try {
+    if (!_iteratorNormalCompletion && _iterator.return) {
+      _iterator.return();
+    }
+  } finally {
+    if (_didIteratorError) {
+      throw _iteratorError;
+    }
+  }
+}
 
+console.log(setArr.size);
 
-var x = { a: 'jspang' };
-var y = { b: '技术胖', m: '我是谁' };
-var z = { c: 'web' };
-var d = Object.assign(x, y, z);
-console.log(d);
+// forEach循环
+setArr.forEach(function (value) {
+  return console.log(value);
+});
+
+// weakSet 弱声明
+var weakObj = new WeakSet();
+var obj = { a: 'jspang', b: '技术胖' };
+weakObj.add(obj);
+
+console.log(weakObj);
