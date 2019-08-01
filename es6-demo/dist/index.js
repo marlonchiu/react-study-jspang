@@ -1,80 +1,73 @@
-'use strict';
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /** 
- *   用Proxy进行预处理
- *    Proxy的存在就可以让我们给函数加上这样的钩子函数
- *      get属性
- *              get属性是在你得到某对象属性值时预处理的方法，他接受三个参数
- *          target：得到的目标值
- *          key：目标的key值，相当于对象的属性
- *          receiver：这个不太常用，用法还在研究中
- *     set属性
- *              set属性是值你要改变Proxy属性值时，进行的预先处理。它接收四个参数。
-
- *          target:目标值。
- *          key：目标的Key值。
- *          value：要改变的值。
- *          receiver：改变前的原始值
- *  
+ *   class类
+ *      通过class定义类/实现类的继承
+ *      在类中通过constructor定义构造方法
+ *      通过new来创建类的实例
+ *      通过extends来实现类的继承
+ *      通过super调用父类的构造方法
+ *      重写从父类中继承的一般方法
  *  */
-// var obj = {
-//     add: function (val) {
-//         return val + 10;  
-//     },
-//     name: 'I am Jspang'
-// };
-// console.log(obj.add(100))
-// console.log(obj.name)
 
-// 声明Proxy
-var pro = new Proxy({
-    add: function add(val) {
-        return val + 10;
-    },
-    name: 'I am Jspang'
-}, {
-    get: function get(target, key, receiver) {
-        console.log('come in Get');
-        return target[key];
-    },
-    set: function set(target, key, value, receiver) {
-        console.log('setting ' + key + ' = ' + value);
-        return target[key] = value;
+// 用class定义一个Person类
+var Person = function () {
+  // 类的构造方法
+  function Person(name, age) {
+    _classCallCheck(this, Person);
+
+    this.name = name;
+    this.age = age;
+  }
+  // 类的一般方法
+
+
+  _createClass(Person, [{
+    key: "showName",
+    value: function showName() {
+      console.log(this.name, this.age);
     }
-});
+  }]);
 
-console.log(pro.name); // 先输出了come in Get  然后才是name
-pro.name = '技术胖'; // setting name = 技术胖
-console.log(pro.name);
+  return Person;
+}();
 
-// apply的作用是调用内部的方法，它使用在方法体是一个匿名函数时
-var target = function target() {
-    return 'I am JSPang';
-};
-var handler = {
-    apply: function apply(target, ctx, args) {
-        console.log('do apply');
-        return Reflect.apply.apply(Reflect, arguments);
+var p1 = new Person('TIM', 38);
+console.log(p1.name);
+p1.showName();
+
+// 定义一个Student 继承Person
+
+var Student = function (_Person) {
+  _inherits(Student, _Person);
+
+  function Student(name, age, salary) {
+    _classCallCheck(this, Student);
+
+    var _this = _possibleConstructorReturn(this, (Student.__proto__ || Object.getPrototypeOf(Student)).call(this, name, age));
+
+    _this.salary = salary;
+    return _this;
+  }
+
+  _createClass(Student, [{
+    key: "showName",
+    value: function showName(name, age, salary) {
+      console.log(this.name, this.age, this.salary);
     }
-};
+  }]);
 
-var pro = new Proxy(target, handler);
+  return Student;
+}(Person);
 
-console.log(pro()); // I am JSPang
-
-
-// http://es6.ruanyifeng.com/#docs/proxy
-var twice = {
-    apply: function apply(target, ctx, args) {
-        return Reflect.apply.apply(Reflect, arguments) * 2;
-    }
-};
-function sum(left, right) {
-    return left + right;
-};
-var proxy = new Proxy(sum, twice);
-proxy(1, 2); // 6
-proxy.call(null, 5, 6); // 22
-proxy.apply(null, [7, 8]); // 30
-
-// 每当执行proxy函数（直接调用或call和apply调用），就会被apply方法拦截。
+var s1 = new Student("MARLON", 26, 17000);
+console.log(s1.name);
+s1.showName();
