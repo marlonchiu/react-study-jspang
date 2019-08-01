@@ -1,64 +1,27 @@
 'use strict';
 
 /** 
- * Set() 数据结构
- *   Set和Array 的区别是Set不允许内部有重复的值，如果有只显示一个，相当于去重。
- *   虽然Set很像数组，但是他不是数组
+ * map数据结构 
+ *    Map的灵活性要更好，你可以把它看成一种特殊的键值对，
+ *    但你的key可以设置成数组，值也可以设置成字符串
  *  
  *  */
+var json = {
+  name: 'jspang',
+  skill: 'web'
+};
+console.log(json.name);
 
-// set s声明
-var setArr = new Set(['jspang', '技术胖', 'web', 'jspang']);
-console.log(setArr); // Set(3) {"jspang", "技术胖", "web"}
+var map = new Map();
+map.set(json, 'iam');
+console.log(map);
+// Map(1) {{…} => "iam"}
+//  上述 key 为json 对象
 
-// Set值的增删查  add delete has
-setArr.add('前端职场');
-console.log(setArr); // Set(4) {"jspang", "技术胖", "web", "前端职场"}
-setArr.delete('前端职场');
-console.log(setArr); // Set(3) {"jspang", "技术胖", "web"}
-console.log(setArr.has('jspang')); //true
-// 清除 clear()
-// setArr.clear();
-// console.log(setArray) // error setArray is not defined
+map.set('jspang', json);
+console.log(map);
 
-// for... of... 循环
-var _iteratorNormalCompletion = true;
-var _didIteratorError = false;
-var _iteratorError = undefined;
-
-try {
-  for (var _iterator = setArr[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-    var item = _step.value;
-
-    console.log(item);
-  }
-
-  // size Set值的数量
-} catch (err) {
-  _didIteratorError = true;
-  _iteratorError = err;
-} finally {
-  try {
-    if (!_iteratorNormalCompletion && _iterator.return) {
-      _iterator.return();
-    }
-  } finally {
-    if (_didIteratorError) {
-      throw _iteratorError;
-    }
-  }
-}
-
-console.log(setArr.size);
-
-// forEach循环
-setArr.forEach(function (value) {
-  return console.log(value);
-});
-
-// weakSet 弱声明
-var weakObj = new WeakSet();
-var obj = { a: 'jspang', b: '技术胖' };
-weakObj.add(obj);
-
-console.log(weakObj);
+// 增删查  get delete size has clear
+console.log(map.get(json));
+console.log(map.size);
+console.log(map.has('jspang'));
