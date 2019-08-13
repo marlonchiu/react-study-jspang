@@ -826,3 +826,74 @@ app.listen(3000, () => {
   ```javascript
   ctx.cookies.get('name')
   ```
+
+## 第12节：Koa2的模板初识（ejs）
+
+开发中不可能把所有的html代码全部卸载JS里，这显然不现实，也没办法完成大型web开发。必须借用模板机制来帮助我们开发，这节课我们就简单了解一下Koa2的模板机制，koa2的目标机制要依靠中间件来完成开发。
+
+* **安装中间件**
+
+  ```bash
+  # 安装中间件
+  
+  npm install --save koa-views
+  ```
+
+* **安装ejs模板引擎**
+
+  ```bash
+  # 安装ejs模板引擎
+  
+  npm install --save ejs
+  ```
+
+* **编写模板**
+
+  ```javascript
+  // 为了模板统一管理，我们新建一个view的文件夹，并在它下面新建index.ejs文件。
+  
+  // ./views/index.ejs
+  
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+      <title><%= title%></title>
+  </head>
+  <body>
+      <h1><%= title %></h1>
+      <p>EJS Welcome to <%= title %></p>
+  </body>
+  </html>
+  ```
+
+* **编写Koa文件**
+
+  ```javascript
+  // ejs模板
+  // ./ejs_demo.js
+  
+  const Koa = require('koa')
+  const views = require('koa-views')
+  const path = require('path')
+  const app = new Koa()
+  
+  // 加载模板引擎
+  app.use(views(path.join(__dirname, './views'), {
+    extension: 'ejs'
+  }))
+  
+  app.use(async (ctx) => {
+    let title = 'HELLO Koa2'
+    await ctx.render('index', {
+      title
+    })
+  })
+  
+  
+  app.listen(3000, () => {
+    console.log('[demo] server is starting at port 3000')
+  })
+  ```

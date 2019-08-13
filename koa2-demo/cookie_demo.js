@@ -11,7 +11,7 @@ const app = new Koa()
 
 app.use(async (ctx) => {
   if (ctx.url === '/index') {
-    ctx.cookies.set('name', 'jspang', {
+    ctx.cookies.set('myName', 'jspang', {
       domain: '127.0.0.1', // 写cookie所在的域名
       path: '/index', // 写cookie所在的路径
       maxAge: 1000 * 60 * 60 * 24, // cookie有效时长
@@ -21,8 +21,8 @@ app.use(async (ctx) => {
     })
     ctx.body = 'cookies is ok'
   } else {
-    if (ctx.cookies.get('name')) { // 读取cookies
-      ctx.body = ctx.cookies.get('name')
+    if (ctx.cookies.get('myName')) { // 读取cookies
+      ctx.body = ctx.cookies.get('myName')
     } else {
       ctx.body = 'cookies is none'
     }
