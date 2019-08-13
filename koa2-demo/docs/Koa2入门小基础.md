@@ -84,6 +84,10 @@ async是异步的简写，而await可以堪称async wait的简写。
 
   await一般在等待async方法执行完毕，但是其实await等待的只是一个表达式，这个表达式在官方文档里说的是Promise对象，可是它也可以接受普通值。
   
+  **await必须在async方法中才可以使用**
+  
+  **await接收Promise对象，也可以接收普通值**
+  
   ```javascript
   // ./demo02.js
   
@@ -127,3 +131,100 @@ test()
 
 // 等待2秒钟， 输出 long_time_value
 ```
+
+## 第03节：Get请求的接收
+
+* 在koa2中GET请求通过request接收，但是接受的方法有两种：query和querystring。
+  * query：返回的是格式化好的参数对象。
+  * querystring：返回的是请求字符串。
+* 从 `ctx.request` 中获取Get请求
+
+    ```javascript
+    /**
+     *  在koa2中GET请求通过request接收，但是接受的方法有两种：query和querystring。
+     *  query：返回的是格式化好的参数对象。
+     *  querystring：返回的是请求字符串。
+     */
+
+    // ./ get_demo.js
+
+    const Koa = require('koa')
+    const app = new Koa()
+    app.use(async (ctx) => {
+        // 上下文得到url对象
+        let url = ctx.url
+        let request = ctx.request
+        let req_query = request.query
+        let req_querystring = request.querystring
+        ctx.body = {
+            url,
+            req_query,
+            req_querystring
+        }
+    })
+
+    app.listen(3000, () => {
+        console.log('[demo] server is starting at port 3000')
+    })
+
+    // 启动一切正常可在浏览器中使用http://127.0.0.1:3000?user=jspang&age=18来进行访问
+    // {"url":"/?user=jspang&age=18","req_query":{"user":"jspang","age":"18"},"req_querystring":"user=jspang&age=18"}
+    // query是一个对象，而querystring就是一个普通的字符串。
+    ```
+
+* 从`ctx`中得到GET请求。`ctx`中也分为query和querystring
+
+  ```javascript
+  // 从ctx中得到GET请求。ctx中也分为query和querystring
+  
+  const Koa = require('koa')
+  const app = new Koa()
+  app.use(async (ctx) => {
+      //从request中获取GET请求
+      // 上下文得到url对象
+      let url = ctx.url
+      let request = ctx.request
+      let req_query = request.query
+      let req_querystring = request.querystring
+  
+      //从上下文中直接获取
+      let ctx_query = ctx.query
+      let ctx_querystring = ctx.querystring
+
+      ctx.body = {
+          url,
+          req_query,
+          req_querystring,
+          ctx_query,
+          ctx_querystring
+      }
+  })
+  
+  app.listen(3000, () => {
+      console.log('[demo] server is starting at port 3000')
+  })
+  
+  /**
+   // 20190813114559
+  // http://127.0.0.1:3000/?user=jspang&age=18
+  
+  {
+    "url": "/?user=jspang&age=18",
+    "req_query": {
+      "user": "jspang",
+      "age": "18"
+    },
+    "req_querystring": "user=jspang&age=18",
+    "ctx_query": {
+      "user": "jspang",
+      "age": "18"
+    },
+    "ctx_querystring": "user=jspang&age=18"
+  }
+  
+  * */
+  ```
+
+* 总结：获得GET请求的方式有两种，一种是从request中获得，一种是一直从上下文中获得。
+
+* 获得的格式也有两种：query和querystring。
