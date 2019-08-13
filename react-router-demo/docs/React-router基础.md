@@ -25,3 +25,17 @@ note: React Router 是一个基于React之上的强大路由库，它可以让�
 # 安装 react-router-dom
 npm install --save react-router-dom
 ```
+
+## P02: 像制作普通网页一样使用ReactRouter
+
+`exact`精准匹配的意思
+
+就是你的路径信息要完全匹配成功，才可以实现跳转，匹配一部分是不行的。
+
+比如我们把`Index`的精准匹配去掉，你会发现，无论你的地址栏输入什么都可以匹配到`Index`组件，这并不是我们想要的结果。
+
+```javascript
+<Route path="/" component={Index} />
+```
+
+所以我们加上了精准匹配`exact`
