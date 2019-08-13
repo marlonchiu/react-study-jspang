@@ -137,6 +137,7 @@ test()
 * 在koa2中GET请求通过request接收，但是接受的方法有两种：query和querystring。
   * query：返回的是格式化好的参数对象。
   * querystring：返回的是请求字符串。
+  
 * 从 `ctx.request` 中获取Get请求
 
     ```javascript
@@ -228,3 +229,273 @@ test()
 * 总结：获得GET请求的方式有两种，一种是从request中获得，一种是一直从上下文中获得。
 
 * 获得的格式也有两种：query和querystring。
+
+## 第04节：POST请求如何接收（1）
+
+* 对于POST请求的处理，Koa2没有封装方便的获取参数的方法，需要通过解析上下文context中的原生node.js请求对象req来获取。
+
+* **获取Post请求的步骤：**
+
+1. 解析上下文ctx中的原生nodex.js对象req。
+2. 将POST表单数据解析成query string-字符串.(例如:user=jspang&age=18)
+3. 将字符串转换成JSON格式。
+
+* **ctx.request和ctx.req的区别**
+
+1. ctx.request: 是Koa2中context经过封装的请求对象，它用起来更直观和简单。
+2. ctx.req: 是context提供的node.js原生HTTP请求对象。这个虽然不那么直观，但是可以得到更多的内容，适合我们深度编程。
+
+* **ctx.method 得到请求类型**
+
+  ```javascript
+  // ctx.method 得到请求类型
+  
+  // Koa2中提供了ctx.method属性，可以轻松的得到请求的类型，
+  // 然后根据请求类型编写不同的相应方法
+  
+  // ./post_demo01.js
+  
+  const Koa = require('koa')
+  const app = new Koa()
+  app.use(async (ctx) => {
+    // 当请求是GET请求，显示表单让用户填写
+    if (ctx.url === '/' && ctx.method === 'GET') {
+      let html = `
+        <h1>Koa2 request post demo</h1>
+        <form method='POST' action='/'>
+        <p>userName</p>
+          <input name="userName"/> <br/>
+          <p>age</p>
+          <input name="age"/> <br/>
+          <p>webSite</p>
+          <input name='webSite'/><br/>
+          <button type="submit">submit</button>
+        </form>
+      `
+      ctx.body = html
+    } else if (ctx.url === '/' && ctx.method === 'POST') {  // 当请求时POST请求时
+      ctx.body = '接收到请求'
+    } else {    // 其他请求显示404报错
+      ctx.body = '<h1>404 page!</h1>'
+    }
+  })
+  
+  app.listen(3000, () => {
+      console.log('[demo] server is starting at port 3000')
+  })
+  
+  /**
+  浏览器中输入http://127.0.0.1:3000进行查看，
+    第一次进入时给我们展现的是一个表单页面，
+    我们点击提交后可以看到服务器接收到了我们的信息，但我们并没有做出任何处理。
+    当我们下输入一个地址时，它会提示404错误。
+  * */
+  
+  // **总结：**从理论上讲解了如何获取POST请求参数
+  ```
+
+
+
+## 第05节：POST请求如何接收（2）
+
+* **解析Node原生POST参数**
+
+  ```javascript
+  // ./post_demo2.js
+  
+  // 解析Node原生POST参数
+  // 声明一个方法，然后用Promise对象进行解析。这里我们使用了ctx.req.on来接收事件
+  function parsePostData(ctx) {
+    return new Promise((resolve, reject) => {
+      try {
+        let postdata = ''
+        ctx.req.on('data', (data) => {
+          postdata += data
+        })
+        ctx.req.addListener('end', function () {
+          resolve(postdata)
+        })
+      } catch{
+        reject(error)
+      }
+    })
+  }
+  ```
+
+* 修改在上节课接收POST请求的处理方法里，修改代码如下
+
+  ```javascript
+  // ctx.body = '接收到POST请求'
+  let postdata = await parsePostData(ctx)  // userName=jspang&age=123&webSite=www.douban.com
+  ctx.body = postdata
+  
+  // 页面就输出刚才填的表单  userName=jspang&age=123&webSite=www.douban.com
+  ```
+
+* **POST字符串解析JSON对象**
+
+  ```javascript
+  // ./post_demo2.js
+  
+  // POST字符串解析JSON对象
+  // 字符串封装JSON兑现对象的方法
+  // userName=jspang&age=123&webSite=www.douban.com
+  function parseQueryStr(queryStr) {
+    let queryData = {}
+    // split() 方法使用指定的分隔符字符串将一个String对象分割成字符串数组，
+    // 以将字符串分隔为子字符串，以确定每个拆分的位置。 
+    let queryStrList = queryStr.split('&')
+    // console.log(queryStrList)
+    // entries() 方法返回一个新的Array Iterator对象，该对象包含数组中每个索引的键/值对
+    for (let [index, queryStrItem] of queryStrList.entries()) {
+      let itemList = queryStrItem.split('=')
+      // console.log(itemList)
+      queryData[itemList[0]] = itemList[1]
+    }
+    return queryData
+  }
+  
+  
+  // 在上述解析Node原生POST参数中修改
+  ctx.req.addListener('end', function () {
+      // resolve(postdata)
+      let parseData = parseQueryStr(postdata)
+      resolve(parseData)
+  })
+  
+  /**
+  使用for…of 循环
+  var arr = ["a", "b", "c"];
+  var iterator = arr.entries();
+  
+  for (let e of iterator) {
+    console.log(e);
+  }
+  
+  // [0, "a"] 
+  // [1, "b"] 
+  // [2, "c"]
+  */
+  
+  // node运行，浏览器http://127.0.0.1:3000，先填写表单，然后页面就会返回
+  /*
+  {
+    "userName": "jspang",
+    "age": "123",
+    "webSite": "www.douban.com"
+  }
+  */
+  ```
+
+* 完整代码见`post_demo2.js`
+
+## [扩展]Array/entries方法精讲
+
+* 参考：[Array/entries](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Array/entries)
+
+* `**entries()**` 方法返回一个新的**Array Iterator**对象，该对象包含数组中每个索引的键/值对。
+
+* > arr.entries()
+
+  返回值是 一个新的 [`Array`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Array) 迭代器对象。[Array Iterator](http://www.ecma-international.org/ecma-262/6.0/#sec-createarrayiterator)是对象，它的原型（__proto__:Array Iterator）上有一个[next](http://www.ecma-international.org/ecma-262/6.0/#sec-%arrayiteratorprototype%.next)方法，可用用于遍历迭代器取得原数组的[key,value]。
+
+* `Array Iterator`
+
+  ```javascript
+  var arr = ["a", "b", "c"];
+  var iterator = arr.entries();
+  console.log(iterator);
+  
+  /*Array Iterator {}
+           __proto__:Array Iterator
+           next:ƒ next()
+           Symbol(Symbol.toStringTag):"Array Iterator"
+           __proto__:Object
+  */
+  ```
+
+* `iterator.next()`
+
+  ```javascript
+  var arr = ["a", "b", "c"]; 
+  var iterator = arr.entries();
+  console.log(iterator.next());
+  
+  /*{value: Array(2), done: false}
+            done:false
+            value:(2) [0, "a"]
+             __proto__: Object
+  */
+  // iterator.next()返回一个对象，对于有元素的数组，
+  // 是next{ value: Array(2), done: false }；
+  // next.done 用于指示迭代器是否完成：在每次迭代时进行更新而且都是false，
+  // 直到迭代器结束done才是true。
+  // next.value是一个["key","value"]的数组，是返回的迭代器中的元素值。
+  ```
+
+* `iterator.next方法运行`
+
+  ```javascript
+  var arr = ["a", "b", "c"];
+  var iter = arr.entries();
+  var a = [];
+  
+  // for(var i=0; i< arr.length; i++){   // 实际使用的是这个 
+  for(var i=0; i< arr.length+1; i++){    // 注意，是length+1，比数组的长度大
+      var tem = iter.next();             // 每次迭代时更新next
+      console.log(tem.done);             // 这里可以看到更新后的done都是false
+      if(tem.done !== true){             // 遍历迭代器结束done才是true
+          console.log(tem.value);
+          a[i]=tem.value;
+      }
+  }
+
+  console.log(a);                         // 遍历完毕，输出next.value的数组
+  ```
+
+* `二维数组按行排序`
+
+  ```javascript
+  function sortArr(arr) {
+      var goNext = true;
+      var entries = arr.entries();
+      while (goNext) {
+          var result = entries.next();
+          if (result.done !== true) {
+              result.value[1].sort((a, b) => a - b);
+              goNext = true;
+          } else {
+              goNext = false;
+          }
+      }
+      return arr;
+  }
+  
+  var arr = [[1,34],[456,2,3,44,234],[4567,1,4,5,6],[34,78,23,1]];
+  sortArr(arr);
+  
+  /*(4) [Array(2), Array(5), Array(5), Array(4)]
+      0:(2) [1, 34]
+      1:(5) [2, 3, 44, 234, 456]
+      2:(5) [1, 4, 5, 6, 4567]
+      3:(4) [1, 23, 34, 78]
+      length:4
+      __proto__:Array(0)
+  */
+  ```
+
+* `使用for…of 循环`
+
+  ```javascript
+  var arr = ["a", "b", "c"];
+  var iterator = arr.entries();
+  // undefined
+  
+  for (let e of iterator) {
+      console.log(e);
+  }
+  
+  // [0, "a"]
+  // [1, "b"]
+  // [2, "c"]
+  ```
