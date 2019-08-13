@@ -526,7 +526,7 @@ test()
   app.use(bodyParser())
   ```
   
-  在代码中使用后，直接可以用ctx.request.body进行获取POST请求参数，中间件自动给我们作了解析。
+  在代码中使用后，直接可以用`ctx.request.body`进行获取POST请求参数，中间件自动给我们作了解析。
   
 * 用例：
 
@@ -567,5 +567,89 @@ test()
   
   app.listen(3000, () => {
       console.log('[demo] server is starting at port 3000')
+  })
+  ```
+
+## 第07节：Koa2原生路由实现
+
+* `ctx.request.url`
+
+  ```javascript
+  // ctx.request.url
+  // 地址栏输入的路径，然后根据路径的不同进行跳转
+  
+  const Koa = require('koa')
+  const app = new Koa()
+  app.use(async (ctx) => {
+    let url = ctx.request.url
+    ctx.body = url
+  })
+  
+  app.listen(3000, () => {
+      console.log('[demo] server is starting at port 3000')
+  })
+  
+  // 访问http://127.0.0.1:3000/jspang/18 页面会输出/jspang/18
+  ```
+
+* **Koa2原生路由实现**
+
+  原生路由的实现需要引入fs模块来读取文件。然后再根据路由的路径去读取，最后返回给页面，进行渲染。
+
+  ```javascript
+  // Koa2原生路由实现
+  
+  // ctx.request.url
+  // 地址栏输入的路径，然后根据路径的不同进行跳转
+  
+  function render(page) {
+    return new Promise((resolve, reject) => {
+      let pageUrl = `./page/${page}`
+      // 获取文件地址 读取文件
+      fs.readFile(pageUrl, "binary", (error, data) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(data)
+        }
+      })
+    })
+  }
+  
+  async function route(url) {
+    let page = '404.html'
+    switch (url) {
+      case '/':
+        page = 'index.html'
+        break
+      case '/index':
+        page = 'index.html'
+        break
+      case '/todo':
+        page = 'todo.html'
+        break
+      case '/404':
+        page = '404.html'
+        break
+      default:
+        break
+    }
+  
+    let html = await render(page)
+    return html
+  }
+  
+  const Koa = require('koa')
+  const app = new Koa()
+  const fs = require('fs')
+  
+  app.use(async (ctx) => {
+    let url = ctx.request.url
+    let html = await route(url)
+    ctx.body = html
+  })
+  
+  app.listen(3000, () => {
+    console.log('[demo] server is starting at port 3000')
   })
   ```
