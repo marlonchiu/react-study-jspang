@@ -499,3 +499,73 @@ test()
   // [1, "b"]
   // [2, "c"]
   ```
+
+## 第06节：koa-bodyparser中间件
+
+对于POST请求的处理，koa-bodyparser中间件可以把koa2上下文的formData数据解析到ctx.request.body中。
+
+* **安装中间件**
+
+  ```bash
+  # 使用npm进行安装，需要注意的是我们这里要用–save，因为它在生产环境中需要使用。
+  
+  npm install --save koa-bodyparser@3
+  ```
+
+* **引入使用**
+
+  安装完成后，需要在代码中引入并使用。我们在代码顶部用require进行引入。
+  
+  ```javascript
+  const bodyParser = require('koa-bodyparser')
+  ```
+  
+  然后进行使用，如果不使用是没办法调用的，使用代码如下。
+  
+  ```javascript
+  app.use(bodyParser())
+  ```
+  
+  在代码中使用后，直接可以用ctx.request.body进行获取POST请求参数，中间件自动给我们作了解析。
+  
+* 用例：
+
+  ```javascript
+  // Post请求解析中间件   koa-bodyparser
+  
+  // ./bodyparser_demo.js
+  
+  const Koa = require('koa')
+  const bodyParser = require('koa-bodyparser')
+  const app = new Koa()
+  app.use(bodyParser())
+  
+  app.use(async (ctx) => {
+    // 当请求是GET请求，显示表单让用户填写
+    if (ctx.url === '/' && ctx.method === 'GET') {
+      let html = `
+        <h1>Koa2 request post demo</h1>
+        <form method='POST' action='/'>
+        <p>userName</p>
+          <input name="userName"/> <br/>
+          <p>age</p>
+          <input name="age"/> <br/>
+          <p>webSite</p>
+          <input name='webSite'/><br/>
+          <button type="submit">submit</button>
+        </form>
+      `
+      ctx.body = html
+    } else if (ctx.url === '/' && ctx.method === 'POST') {  // 当请求时POST请求时
+      // ctx.body = '接收到POST请求'
+      let postData= ctx.request.body
+      ctx.body = postData
+    } else {    // 其他请求显示404报错
+      ctx.body = '<h1>404 page!</h1>'
+    }
+  })
+  
+  app.listen(3000, () => {
+      console.log('[demo] server is starting at port 3000')
+  })
+  ```
