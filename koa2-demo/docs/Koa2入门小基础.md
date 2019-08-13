@@ -653,3 +653,150 @@ test()
     console.log('[demo] server is starting at port 3000')
   })
   ```
+
+## 第08节：Koa-router中间件（1）入门
+
+安装koa-router中间件
+
+```bash
+# 安装koa-router中间件
+
+npm install --save koa-router
+```
+
+基础案例
+
+```javascript
+// Koa-router
+
+// ./koa-router1.js
+
+const Koa = require('koa')
+const Router = require('koa-router')
+
+const app = new Koa()
+const router = new Router()
+
+router
+  .get('/', (ctx, next) => {
+    ctx.body = 'Hello Koa-router'
+  })
+  .get('/todo', (ctx, next) => {   // 路由多页面配置
+    ctx.body = 'Todo page!'
+  })
+
+// 挂载路由
+app.use(router.routes())
+  .use(router.allowedMethods())
+
+app.listen(3000, () => {
+  console.log('[demo] server is starting at port 3000')
+})
+```
+
+
+
+## 第09节：Koa-router中间件（2）层级
+
+* **设置前缀**
+
+  有时候我们想把所有的路径前面都再加入一个级别，比如原来我们访问的路径是`http://127.0.0.1:3000/todo`，现在我们希望在所有的路径前面都加上一个jspang层级，把路径变成`http://127.0.0.1:3000/jspang/todo.`这时候就可以使用层级来完成这个功能。路由在创建的时候是可以指定一个前缀的，这个前缀会被至于路由的最顶层，也就是说，这个路由的所有请求都是相对于这个前缀的.
+
+  ```javascript
+  const router = new Router({
+      prefix:'/jspang'
+  })
+  ```
+
+* 设置层级
+
+  设置前缀一般都是全局的，并不能实现路由的层级，如果你想为单个页面设置层级，也是很简单的。只要在use时使用路径就可以了。
+
+  例如这种写法装载路由层级，这里的router相当于父级：`router.use(‘/page’, page.routes(), page.allowedMethods())`。
+
+  通过这种写法的好处是并不是全局的，我们可以给不同的路由加层级。
+
+  ```javascript
+  // Koa-router 层级
+  
+  // ./koa-router2.js
+  
+  const Koa = require('koa')
+  const Router = require('koa-router')
+  
+  const app = new Koa()
+  // const router = new Router({
+  //   // prefix: '/jspang'  // 设置前缀
+  // })
+  
+  // 设置路由层级
+  let home = new Router()
+  home
+    .get('/jspang', async (ctx, next) => {
+      ctx.body = 'Home jspang'
+    })
+    .get('/todo', async (ctx, next) => {   // 路由多页面配置
+      ctx.body = 'Home Todo'
+    })
+  
+  let page = new Router()
+  page
+    .get('/jspang',(ctx, next) => {  // async 异步不异步都可以
+      ctx.body = 'Page jspang'
+    })
+    .get('/todo',(ctx, next) => {   // 路由多页面配置
+      ctx.body = 'Page Todo'
+    })
+  
+  // 装载所有子路由  router.use(‘/page’, page.routes(), page.allowedMethods())
+  // 设置父路由
+  let router = new Router()
+  router.use('/home', home.routes(), home.allowedMethods())
+  router.use('/page', page.routes(), page.allowedMethods())
+  
+  // 挂载路由中间件
+  app.use(router.routes())
+    .use(router.allowedMethods())
+  
+  app.listen(3000, () => {
+    console.log('[demo] server is starting at port 3000')
+  })
+  ```
+
+## 第10节：Koa-router中间件（3）参数
+
+* 获取传递参数 `ctx.query来进行接收`
+
+  ```javascript
+  // Koa-router 参数
+  
+  // ./koa-router3.js
+  
+  const Koa = require('koa')
+  const Router = require('koa-router')
+  
+  const app = new Koa()
+  const router = new Router()
+  
+  router
+    .get('/', (ctx, next) => {
+      // 获取 get 请求参数
+      ctx.body = ctx.query
+    })
+  
+  // 挂载路由中间件
+  app.use(router.routes())
+    .use(router.allowedMethods())
+  
+  app.listen(3000, () => {
+    console.log('[demo] server is starting at port 3000')
+  })
+  
+  // 地址栏输出 http://127.0.0.1:3000/?user=jspang&age=18
+  /*
+  {
+    "user": "jspang",
+    "age": "18"
+  }
+  */
+  ```
