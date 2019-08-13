@@ -1,5 +1,5 @@
 ---
-title: Koa2入门小基础
+`title: Koa2入门小基础
 date: '2019-08-13'
 type: 技术
 tags: Koa2
@@ -799,4 +799,30 @@ app.listen(3000, () => {
     "age": "18"
   }
   */
+  ```
+
+## 第11节：Koa2中使用cookie
+
+* `ctx.cookies.get(name,[optins])`: 读取上下文请求中的cookie。
+* `ctx.cookies.set(name,value,[options])`：在上下文中写入cookie
+
+* **写入`Cookies`**
+
+  ```javascript
+  ctx.cookies.set('name', 'jspang')
+  ```
+
+* **Cookie选项**
+  * 比如我们要存储用户名，保留用户登录状态时，你可以选择7天内不用登录，也可以选择30天内不用登录。这就需要在写入是配置一些选项：
+  * `domain`：写入cookie所在的域名
+  * `path`：写入cookie所在的路径
+  * `maxAge`：Cookie最大有效时长
+  * `expires`：cookie失效时间
+  * `httpOnly`:是否只用http请求中获得
+  * `overwirte`：是否允许重写
+
+* **读取`cookies`**
+
+  ```javascript
+  ctx.cookies.get('name')
   ```
