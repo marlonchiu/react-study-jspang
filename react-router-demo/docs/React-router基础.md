@@ -179,3 +179,165 @@ npm install --save react-router-dom
   
   this.props.history.push("/home/")
   ```
+
+
+
+##  P06: 实例-ReactRouter嵌套路由
+
+* `./src/AppRouter.js`
+
+  ```javascript
+  import React from 'react'
+  import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+  import Index from './pages/Index'
+  //--关键代码------------start
+  import Video from './pages/Video'
+  import WorkPlace from './pages/WorkPlace'
+  //--关键代码------------end
+  import './assets/index.css'
+  
+  const AppRouter = () => {
+    return (
+      <Router>
+        <div className="mainDiv">
+          <div className="leftNav">
+            <h3>一级导航</h3>
+            <ul>
+                <li> <Link to="/">博客首页</Link> </li>
+                {/* <li><Link to="">视频教程</Link> </li> */}
+                {/*--关键代码------------start*/}
+                <li><Link to="/video/">视频教程</Link> </li>
+                {/*--关键代码------------end*/}
+                <li><Link to="/workplace/">职场技能</Link> </li>
+            </ul>
+          </div>
+          <div className="rightNav">
+            <Route path="/" exact component={Index} />
+            {/*--关键代码------------start*/}
+            <Route path="/video/" component={Video} />
+            {/*--关键代码------------end*/}
+            <Route path="/workplace/" component={WorkPlace} />
+          </div>
+        </div>
+      </Router>
+    )
+  }
+
+  export default AppRouter;
+  ```
+
+* `./src/pages/Video.js`
+
+  ```javascript
+  import React, { Component } from 'react';
+  import { Route, Link } from 'react-router-dom'
+  // 引入组件页面
+  import FlutterPage from './video/FlutterPage'
+  import ReactPage from './video/ReactPage'
+  import VuePage from './video/VuePage'
+  
+  class Video extends Component {
+    render() {
+      return (
+        <div>
+          <div className='topNav'>
+            <ul>
+              <li>
+                <Link to="/video/react">React教程</Link>
+              </li>
+              <li>
+                <Link to="/video/vue">Vue教程</Link>
+              </li>
+              <li>
+                <Link to="/video/flutter">Flutter教程</Link>
+              </li>
+            </ul>
+          </div>
+          <div className="videoContent">
+            <h3>视频教程</h3>
+            <Route path="/video/react/" component={ReactPage} />
+            <Route path="/video/vue/" component={VuePage} />
+            <Route path="/video/flutter/" component={FlutterPage} />
+          </div>
+        </div>
+       );
+    }
+  }
+
+  export default Video;
+  ```
+
+## P09: 后台动态获取路由进行配置
+
+* 针对于大多数项目后台管理系统，菜单并不是写死的，而是通过后台接口获得的。模拟下后台获取路由配置，并编写动态路由配置的方法。
+
+* 代码扩展
+
+  ```javascript
+  // ./src/AppRouter.js
+  
+  import React from 'react'
+  import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+  import Index from './pages/Index'
+  //--关键代码------------start
+  import Video from './pages/Video'
+  import WorkPlace from './pages/WorkPlace'
+  //--关键代码------------end
+  import './assets/index.css'
+  
+  // 模拟动态导航菜单
+  let routeConfig = [
+    {
+      path: '/',
+      title: '博客首页',
+      component: Index,
+      exact: true
+    },
+    {
+      path: '/video/',
+      title: '视频教程',
+      component: Video,
+      exact: false
+    },
+    {
+      path: '/workplace/',
+      title: '职场技能',
+      component: WorkPlace,
+      exact: false
+    }
+  ]
+  
+  const AppRouter = () => {
+    return (
+      <Router>
+        <div className="mainDiv">
+          <div className="leftNav">
+            <h3>一级导航</h3>
+            <ul>
+              {
+                routeConfig.map((item, index) => {
+                  return (
+                    <li key={index}> <Link to={item.path}>{item.title}</Link> </li>
+                  )
+                })
+              }
+            </ul>
+          </div>
+          <div className="rightNav">
+            {
+              routeConfig.map((item, index) => {
+                return (
+                  <Route key={index} path={item.path} exact={item.exact} component={item.component} />
+                )
+              })
+            }
+          </div>
+        </div>
+      </Router>
+    )
+  }
+
+  export default AppRouter;
+  ```
+
+* **可以利用这模式来设计静态的路由，增加你程序的扩展性。希望你这节课能get到这个技能，也能在工作中尽量使用这种模式**

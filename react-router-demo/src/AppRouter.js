@@ -7,6 +7,28 @@ import WorkPlace from './pages/WorkPlace'
 //--关键代码------------end
 import './assets/index.css'
 
+// 模拟动态导航菜单
+let routeConfig = [
+  {
+    path: '/',
+    title: '博客首页',
+    component: Index,
+    exact: true
+  },
+  {
+    path: '/video/',
+    title: '视频教程',
+    component: Video,
+    exact: false
+  },
+  {
+    path: '/workplace/',
+    title: '职场技能',
+    component: WorkPlace,
+    exact: false
+  }
+]
+
 const AppRouter = () => {
   return (
     <Router>
@@ -14,20 +36,23 @@ const AppRouter = () => {
         <div className="leftNav">
           <h3>一级导航</h3>
           <ul>
-              <li> <Link to="/">博客首页</Link> </li>
-              {/* <li><Link to="">视频教程</Link> </li> */}
-              {/*--关键代码------------start*/}
-              <li><Link to="/video/">视频教程</Link> </li>
-              {/*--关键代码------------end*/}
-              <li><Link to="/workplace/">职场技能</Link> </li>
+            {
+              routeConfig.map((item, index) => {
+                return (
+                  <li key={index}> <Link to={item.path}>{item.title}</Link> </li>
+                )
+              })
+            }
           </ul>
         </div>
         <div className="rightNav">
-          <Route path="/" exact component={Index} />
-          {/*--关键代码------------start*/}
-          <Route path="/video/" component={Video} />
-          {/*--关键代码------------end*/}
-          <Route path="/workplace/" component={WorkPlace} />
+          {
+            routeConfig.map((item, index) => {
+              return (
+                <Route key={index} path={item.path} exact={item.exact} component={item.component} />
+              )
+            })
+          }
         </div>
       </div>
     </Router>
