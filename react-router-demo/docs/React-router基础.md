@@ -147,3 +147,35 @@ npm install --save react-router-dom
 ## P04: ReactRouter动态传值-2
 
 详见代码 `./src/pages/Index.js`
+
+## P05: ReactRouter重定向-Redirect使用
+
+* `Redirect`(重定向)
+  - 标签式重定向: 就是利用`<Redirect>`标签来进行重定向，业务逻辑不复杂时建议使用这种。
+  - 编程式重定向: 这种是利用编程的方式，一般用于业务逻辑当中，比如登录成功挑战到会员中心页面。
+
+* 重定向和跳转有一个重要的区别，就是跳转是可以用浏览器的回退按钮返回上一级的，而重定向是不可以的。
+
+* **标签式重定向**
+
+  ```javascript
+  // ./src/AppRouter.js
+  import Home from './Pages/Home'
+  <Route path="/home/" component={Home} />
+
+  // ./src/pages/Index.js
+  
+  // 从Index组件重新定向到Home组件，需要先引入Redirect。
+  import { Link , Redirect } from "react-router-dom";
+  
+  // 引入Redirect后，直接在render函数里使用
+  <Redirect to="/home/" />
+  ```
+
+* **编程式重定向**
+
+  ```javascript
+  // 直接在构造函数constructor中加入下面的重定向代码。
+  
+  this.props.history.push("/home/")
+  ```

@@ -9,6 +9,7 @@ class List extends Component {
                 { cid: 789, title: '技术胖的个人博客-3' }
             ]
         }
+        // this.props.history.push("/home/")
     }
     componentDidMount() {
         console.log(this.props.match)

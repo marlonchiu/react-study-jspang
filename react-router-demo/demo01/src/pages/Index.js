@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import{ Link } from 'react-router-dom'
+import{ Link, Redirect } from 'react-router-dom'
 class Index extends Component {
     constructor(props) {
         super(props)
@@ -22,7 +22,8 @@ class Index extends Component {
                         list.map((item, index) => {
                             return (
                                 <li key={index}>
-                                    <Link to={`/list/${item.cid}`}>{item.title}</Link> 
+                                    <Link to={`/list/${item.cid}`}>{item.title}</Link>
+                                    {/* <Redirect to="/home/" /> */}
                                 </li>
                             )
                         })
