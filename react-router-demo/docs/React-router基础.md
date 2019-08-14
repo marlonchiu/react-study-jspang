@@ -39,3 +39,111 @@ npm install --save react-router-dom
 ```
 
 所以我们加上了精准匹配`exact`
+
+
+
+* 简单页面代码
+
+  ```javascript
+  // ./src/AppRouter.js
+  
+  import React from 'react'
+  import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+  
+  // 引入响应的页面组件
+  import Index from './pages/Index'
+  import List from './pages/List'
+  
+  function AppRouter() {
+      return (
+          <Router>
+              <ul>
+                  <li> <Link to="/">首页</Link> </li>
+                  <li><Link to="/list/">列表</Link> </li>
+              </ul>
+              <Route path='/' exact component={Index} />
+              <Route path='/list/' component={List} />
+          </Router>
+      )
+  }
+  
+  export default AppRouter
+  
+  // 如果把Index的精准匹配去掉，你会发现，无论你的地址栏输入什么都可以匹配到Index组件
+  ```
+  
+## P03: ReactRouter动态传值-1
+
+### 在Route上设置允许动态传值
+
+这个设置是以`:`开始的，然后紧跟着你传递的key（键名称）名称。
+
+```js
+<Route path="/list/:id" component={List} />
+```
+
+### Link上传递值
+
+设置好规则后，就可以在`Link`上设置值了，现在设置传递的ID值了，这时候不用再添加id了，直接写值就可以了。
+
+```js
+ <li><Link to="/list/123">列表</Link> </li>
+```
+
+### 在List组件上接收并显示传递值
+
+在List组件的`componentDidMount`生命周期下，打印输出`this.props.match`，可以看出得到三个对象
+
+```javascript
+// {path: "/list/:id", url: "/list/123", isExact: true, params: {…}}
+{
+  isExact: true
+  params:{
+    id: "123"
+  }
+  path: "/list/:id"
+  url: "/list/123"
+}
+```
+
+* `this.props.match` 对象包括三个部分:
+  * `patch`: 自己定义的路由规则，可以清楚的看到是可以产地id参数的。
+  * `url`:  真实的访问路径，这上面可以清楚的看到传递过来的参数是什么。
+  * `params`： 传递过来的参数，key和value值。
+
+* List组件展示页面的Id
+
+  ```javascript
+  // ./src/pages/List.js
+  
+  import React, { Component } from 'react'
+  class List extends Component {
+      constructor(props) {
+          super(props)
+          this.state = {
+              id: ''
+          }
+      }
+      componentDidMount() {
+          console.log(this.props.match)
+          let tempId = this.props.match.params.id
+          this.setState({
+              id: tempId
+          })
+      }
+      render() { 
+          const {id} = this.state
+          return (
+              <div>
+                  <h2>List Page Id--> {id}</h2>
+              </div>
+          )
+      }
+  }
+
+  export default List;
+  ```
+
+## P04: ReactRouter动态传值-2
+
+详见代码 `./src/pages/Index.js`
