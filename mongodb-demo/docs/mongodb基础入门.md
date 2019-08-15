@@ -1,6 +1,6 @@
 ---
 title: mongodb基础入门
-date: '2019-08-14'
+date: '2019-08-15'
 type: 技术
 tags: Koa2 | Mongodb
 sidebarDepth: 3
@@ -97,3 +97,79 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   * `db.集合.drop()`:删除整个集合，这个在实际工作中一定要谨慎使用，如果是程序，一定要二次确认。
 
   * `db.dropDatabase()`: 删除整个数据库，在删除库时，一定要先进入数据库，然后再删除。实际工作中这个基本不用，实际工作可定需要保留数据和痕迹的。
+
+## 第04节：用js文件写mongo命令
+
+* 编写执行代码
+
+  ```javascript
+  // ./mongoShell/goTask.js
+  
+  var userName = 'jspang'  // 声明一个登录名  
+  var timeStamp = Date.parse(new Date()) // 声明登录时的时间戳  
+  var jsonDdatabase = {  // 组成JSON字符串
+    "loginUnser": userName,
+    "loginTime": timeStamp
+  }
+  var db = connect('log')  //链接数据库
+  db.login.insert(jsonDdatabase) //插入数据
+  
+  print('[demo]log  print success')  //没有错误显示成功
+  ```
+
+* 执行
+
+  ```bash
+  # 链接数据库(cmd)
+  mongo
+  
+  mongo goTask.js
+  
+  show dbs
+  use log
+  show collections
+  db.login.find()
+  ```
+
+## 第05节：批量插入的正确方法
+
+* 在操作数据库时要注意两个能力：
+  * 第一个是快速存储能力。
+  * 第二个是方便迅速查询能力。
+
+* **批量插入**
+
+  * 批量数据插入是以数组的方式进行的（如果写错，可以3个回车可以切出来）
+
+  * 插入数据测试
+
+    ```bash
+    db.test.insert([
+        {"_id":1},
+        {"_id":2},
+        {"_id":3}
+    ])
+
+    # 3.2版本以前的用法
+    db.test.batchInsert([
+        {"_id":1},
+        {"_id":2},
+        {"_id":3}
+    ])
+    ```
+
+  * 注意一次插入不要超过48M，向.zip和大图片什么的尽量用静态存储，MongoDB存储静态路径就好。
+
+* **批量插入性能测试**
+
+  ```bash
+  # 一个个插入  执行insertTest1.js  耗时622ms
+  mongo insertTest1.js
+  
+  # 批量插入  执行insertTest2.js  耗时15ms
+  mongo insertTest2.js
+  ```
+
+* 总结：在工作中一定要照顾数据库性能，这也是你水平的提现，一个技术会了很简单，但是要作精通不那么简单。学完这节，记得在工作中如果在循环插入和批量插入举起不定，那就选批量插入吧，它会给我们更优的性能体验。
+
+## 第06节：修改：Update常见错误
