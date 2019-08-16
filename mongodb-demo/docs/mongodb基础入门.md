@@ -240,3 +240,151 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   
   // upsert也有两个值：true代表没有就添加，false代表没有不添加(默认值)
   ```
+
+## [#](http://www.jspang.com/posts/2017/12/16/mongodb.html#第08节：修改：update数组修改器)第08节：修改：update数组修改器
+
+* **`$push`追加数组/内嵌文档值**
+
+  `$push`的功能是追加数组中的值，但我们也经常用它操作内嵌稳文档，就是{}对象型的值
+
+  ```javascript
+  // $push追加数组/内嵌文档值
+  db.workmate.update({ name: 'xiaoWang' }, { $push: { interest: 'draw' } })
+  
+  // $push修饰符还可以为内嵌文档增加值
+  db.workmate.update({ name: 'MinJie' }, { $push: { "skill.skillFour": 'draw' } })
+  ```
+
+  **`$push`修饰符还可以为内嵌文档增加值**
+
+* **`$ne`查找是否存在**
+
+  **检查一个值是否存在，如果不存在再执行操作，存在就不执行**
+
+  ```javascript
+  db.workmate.update({ name: 'xiaoWang', "interest": { $ne: 'playGame' } }, { $push: { interest: 'playGame' } })
+  
+  // 总结：没有则修改，有则不修改。
+  ```
+
+* **`$addToSet` 升级版的`$ne`**
+
+  `$ne`的升级版本（查找是否存在，不存在就push上去），操作起来更直观和方便，所以再工作中这个要比`$en`用的多。
+
+  ```javascript
+  // 查看小王(xiaoWang)兴趣(interest)中有没有阅读（readBook）这项，没有则加入读书(readBook)的兴趣.
+  
+  db.workmate.update({ name: "xiaoWang" }, { $addToSet: { interest: "readBook" } })
+  ```
+
+* **`$each`批量追加**
+
+  可以传入一个数组，一次增加多个值进去，相当于批量操作，性能同样比循环操作要好很多，这个是需要我们注意的，工作中也要先组合成数组，然后用批量的形式进行操作。
+
+  ```javascript
+  // 给xiaoWang,一次加入三个爱好，唱歌（Sing），跳舞（Dance），编码（Code）
+  
+  var newInterset = ["Sing", "Dance", "Code"]
+  db.workmate.update({ name: "xiaoWang" }, { $addToSet: { interest: { $each: newInterset } } })
+  ```
+
+* **`$pop` 删除数组值**
+
+  `$pop`只删除一次，并不是删除所有数组中的值。而且它有两个选项，一个是1和-1。
+
+    1：从数组末端进行删除；  -1：从数组开端进行删除
+
+  ```javascript
+  db.workmate.update({ name: 'xiaoWang' }, { $pop: { interest: 1 } })
+  ```
+
+* **`interest.int` 数组定位修改**
+
+  修改数组的第几位，但并不知道是什么，这时候我们可以使用`interest.int` 的形式
+
+  ```javascript
+  // 修改xiaoWang的第三个兴趣为编码（Code），注意这里的计数是从0开始的
+  
+  db.workmate.update({ name: 'xiaoWang' }, { $set: { "interest.2": "Code" } })
+  ```
+
+## 第09节：修改：状态返回与安全
+
+在修改时我们都会用`findAndModify`，它可以给我们返回来一些必要的参数，让我们对修改多了很多控制力，控制力的加强也就是对安全的强化能力加强。
+
+* **应答式写入**
+
+  在之前的操作都是非应答式写入，就是在操作完数据库后，它并没有给我们任何的回应和返回值，而是我们自己安慰自己写了一句话 `print(‘[update]:The data was updated successfully’)`。这在工作中是不允许的，因为根本不能提现我们修改的结果。应答式写入就会给我们直接返回结果（报表），结果里边的包含项会很多，这样我们就可以很好的进行程序的控制和安全机制的处理。有点像前端调用后端接口，无论作什么，后端都要给我一些状态字一样。
+
+* **`db.runCommand( )`**
+
+  它是数据库运行命令的执行器，执行命令首选就要使用它，因为它在Shell和驱动程序间提供了一致的接口。（几乎操作数据库的所有操作，都可以使用`runCommand来执行`）现在我们试着用`runCommand`来修改数据库，看看结果和直接用`db.collections.update`有什么不同。
+
+  ```javascript
+  // 修改了所有男士的数据，每个人增加了1000元钱(money)，然后用db.runCommand()执行
+  db.workmate.update({ sex: 1 }, { $set: { money: 1000 } }, false, true)
+  var resultMessage = db.runCommand({ getLastError: 1 })
+  printjson(resultMessage)
+  
+  /*
+  false：第一句末尾的false是upsert的简写，代表没有此条数据时不增加;
+  true：true是multi的简写，代表修改所有，这两个我们在前边课程已经学过。
+  getLastError:1 :表示返回功能错误，这里的参数很多，如果有兴趣请自行查找学习，
+  printjson：表示以json对象的格式输出到控制台。
+  */
+  
+  // 执行返回结果
+  {
+    "connectionId" : 9,
+    "updatedExisting" : true,
+    "n" : 3,
+    "syncMillis" : 0,
+    "writtenTo" : null,
+    "err" : null,
+    "ok" : 1
+  }
+  ```
+
+* 查看是否和数据库链接成功
+
+  ```javascript
+  db.runCommand({ ping: 1 })
+  
+  // 返回ok：1就代表链接正常
+  /*
+  connecting to: mongodb://127.0.0.1:27017/company
+  Implicit session: session { "id" : UUID("f8e213c6-c27b-4282-be47-df5a76eb72ae") }
+  MongoDB server version: 4.0.10
+  true
+  */
+  ```
+
+* **findAndModify**
+
+  * `findAndModify`是查找并修改的意思。配置它可以在修改后给我们返回修改的结果
+
+  * **`findAndModify`属性值：**
+    * `query`：需要查询的条件/文档
+    * `sort`: 进行排序
+    * `remove：[boolean]`是否删除查找到的文档，值填写true，可以删除。
+    * `new:[boolean]`返回更新前的文档还是更新后的文档。
+    * `fields`：需要返回的字段
+    * `upsert`：没有这个值是否增加。
+
+    ```javascript
+    // findAndModify是查找并修改的意思。配置它可以在修改后给我们返回修改的结果
+    var myModify={
+      findAndModify: "workmate",
+      query: { name: 'JSPang' },
+      update: { $set: { age: 18 } },
+      new:true    // 更新完成，需要查看结果，如果为false不进行查看结果
+    }
+
+    var ResultMessage = db.runCommand(myModify)
+    printjson(ResultMessage)
+
+    // 返回结果  是最新的JSPang 数据
+    ```
+
+  * `findAndModify`的性能是没有直接使用`db.collections.update`的性能好，但是在实际工作中都是使用它，毕竟要商用的程序安全性还是比较重要的。
+  
