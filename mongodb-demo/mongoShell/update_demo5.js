@@ -11,11 +11,11 @@ var db = connect('company')
 // 返回ok：1就代表链接正常
 
 // findAndModify是查找并修改的意思。配置它可以在修改后给我们返回修改的结果
-var myModify={
+var myModify = {
   findAndModify: "workmate",
   query: { name: 'JSPang' },
   update: { $set: { age: 18 } },
-  new:true    // 更新完成，需要查看结果，如果为false不进行查看结果
+  new: true   // 更新完成，需要查看结果，如果为false不进行查看结果
 }
 
 var ResultMessage = db.runCommand(myModify)
