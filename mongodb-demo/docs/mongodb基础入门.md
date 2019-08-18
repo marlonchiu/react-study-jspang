@@ -388,3 +388,49 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
 
   * `findAndModify`的性能是没有直接使用`db.collections.update`的性能好，但是在实际工作中都是使用它，毕竟要商用的程序安全性还是比较重要的。
   
+## 第10节：查询：find的不等修饰符
+
+* 基础查找
+
+  ```javascript
+  // 简单查找
+  db.workmate.find({ "skill.skillOne": "HTML + CSS" })
+  
+  // 筛选字段
+  db.workmate.find(
+    { "skill.skillOne": "HTML+CSS" },
+    {
+      name: true,
+      "skill.skillOne": true,
+      _id: false  // 不显示_id
+    }
+  )
+  ```
+
+* **不等修饰符**
+  * `小于($lt)` : 英文全称less-than
+  * `小于等于($lte)` ： 英文全称less-than-equal
+  * `大于($gt)` : 英文全称greater-than
+  * `大于等于($gte)`: 英文全称greater-than-equal
+  * `不等于($ne)`: 英文全称not-equal
+
+  ```javascript
+  // 不等查找  年龄小于30大于25岁的人
+  db.workmate.find(
+    { age: { $lte: 30, $gte: 25 } },
+    { name: true, age: true, "skill.skillOne": true, _id: false } 
+  )
+  ```
+
+* **日期查找**
+
+  ```javascript
+  var startDate = new Date('01/01/2018')
+  
+  db.workmate.find(
+    { regeditTime: { $gt: startDate } },
+    { name: true, age: true, "skill.skillOne": true, _id: false }
+  )
+  ```
+
+## 第11节：查询：find的多条件查询
