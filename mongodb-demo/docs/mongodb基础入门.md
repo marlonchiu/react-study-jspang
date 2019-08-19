@@ -1034,3 +1034,57 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   ```javascript
   mongo  -u jspang -p 123456 127.0.0.1:27017/admin
   ```
+
+
+
+## 第20节：管理：备份和还原
+
+* 对数据库的备份和还原: `mongodump`和`mongorestore`两个命令
+
+* **备份`mongodump`**
+
+  * mongodump备份的基本格式
+
+    ```javascript
+    mongodump
+        --host 127.0.0.1
+        --port 27017
+        --out D:/databack/backup   // 备份地址
+        --collection myCollections
+        --db test
+        --username username
+        --password password
+    ```
+
+  * 备份演示：
+
+    ```javascript
+    mongodump --host 127.0.0.1 --port 27017 --out D:/databack/
+    ```
+
+* **数据恢复`mongorestore`**
+
+  * mongorestore恢复基本格式
+
+    ```javascript
+    mongorestore
+        --host 127.0.0.1
+        --port 27017
+        --username username
+        --password password
+        <path to the backup>
+    ```
+
+  * 恢复演示
+
+    ```javascript
+    mongorestore --host 127.0.0.1 --port 27017 D:/databack/
+    ```
+
+* 两个命令很简单，甚至你可以写成脚本和定时任务，让他每天自己执行。但是如果你真的使用了MongoDB数据库，这是一个最基本的操作。
+
+## 第21节：管理：图形界面管理（完结）
+
+* `NoSQL Manager for MongoDB`
+* `Studio 3T`
+* `MongoDB Compass`
