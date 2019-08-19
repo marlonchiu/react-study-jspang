@@ -753,3 +753,119 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   ```
 
 * 使用 `db.randomInfo.stats()`这个命令查看数据中的数据条数
+
+## 第16节：索引：索引入门
+
+* **索引查询** --- 普通查询性能
+
+  ```javascript
+  // 索引查询 --- 普通查询性能
+  var startTime = (new Date()).getTime()
+  
+  var db = connect('company')
+  // 跳过 5000 查询  db.randomInfo.find().skip(50000)
+  var result = db.randomInfo.find({
+    username:"undefined4pi4n"
+  })
+  
+  result.forEach(result => {
+    printjson(result)
+  })
+  
+  var endTime = (new Date()).getTime()
+  
+  print("[SUCCESS]:THIS RUN TIME IS:" + (endTime - startTime) + "ms")
+  
+  // 查询时间 875ms左右
+  ```
+
+* **建立索引**
+
+  ```javascript
+  // 建立索引  --- 试着为用户名（username）建立索引
+  
+  db.randomInfo.ensureIndex({ username: 1 })
+  ```
+
+* **查看现有索引**
+
+  ```javascript
+  // 查看现有索引
+  
+  db.randomInfo.getIndexes()
+  ```
+
+* 建立索引后再次执行查询 `load('./index_demo2.js')`，时间下降到 7ms了，随机波动，不超过20ms
+  
+* 无论是在关系型数据库还是文档数据库，建立索引都是非常重要的。索引这东西是要消耗硬盘和内存资源的，所以还是要根据程序需要进行建立了。**MongoDB也给我们进行了限制，只允许我们建立64个索引值**。
+
+## 第17节：索引：复合索引
+
+* **索引中的小坑**
+
+  * 通过实际开发和性能对比，总结了几条不用索引的情况（不一定对，但是自己的经验之谈）。
+
+  * 数据不超万条时，不需要使用索引。性能的提升并不明显，而大大增加了内存和硬盘的消耗。
+  * 查询数据超过表数据量30%时，不要使用索引字段查询。实际证明会比不使用索引更慢，因为它大量检索了索引表和我们原表。（如查询员工的性别）
+  * 数字索引，要比字符串索引快的多，在百万级甚至千万级数据量面前，使用数字索引是个明确的选择。
+  * 把你经常查询的数据做成一个内嵌数据（对象型的数据），然后集体进行索引。
+
+* **复合索引** : 复合索引就是两条以上的索引
+
+  ```javascript
+  // db.randomInfo.ensureIndex({ username: 1 })
+  
+  // 增加建立randNum0 的索引
+  db.randomInfo.ensureIndex({randNum0:1})
+  // 查看现有索引
+  db.randomInfo.getIndexes()
+  ```
+
+* **两个索引同时查询**
+
+  ```javascript
+  var startTime = (new Date()).getTime()
+  var db = connect('company')
+  
+  var result = db.randomInfo.find({
+    username: "undefined4pi4n",
+    randNum0: 565509
+  })
+  
+  result.forEach(result => {
+    printjson(result)
+  })
+  
+  var endTime = (new Date()).getTime()
+  print("[SUCCESS]:THIS RUN TIME IS:" + (endTime - startTime) + "ms")
+  
+  // 查询时间 8ms
+  // 从性能上看并没有什么特殊的变化，查询时间还是在8ms左右。
+  // MongoDB的复合查询是按照我们的索引顺序进行查询的
+  ```
+
+* 执行查询 `load('./index_demo3.js')`
+
+* **指定索引查询（`hint`）**
+
+  数字的索引要比字符串的索引快，这就需要一个方法来打破索引表的查询顺序，用我们自己指定的索引优先查询，这个方法就是`hint()`
+
+  ```javascript
+  // 打破索引表的查询顺序
+  var result = db.randomInfo.find({
+    username: "undefined4pi4n",
+    randNum0: 565509
+  }).hint({ randNum0: 1 })
+  ```
+
+* **删除索引**
+
+  当索引性能不佳或起不到作用时，我们需要删除索引，删除索引的命令是`dropIndex()`. 
+
+  ```javascript
+  db.randomInfo.dropIndex('randNum0_1') //索引的唯一ID
+  
+  // 删除时填写的值，并不是我们的字段名称（key），而是我们索引查询表中的name值
+  ```
+
+## 第18节：索引：全文索引
