@@ -183,8 +183,6 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   print('[SUCCESS]: The data was inserted successfully.');
   ```
 
-  
-
 ## 第06节：修改：Update常见错误
 
 了解常见的错误操作
@@ -539,7 +537,7 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
       interest: 1,
       age: 1,
       _id: 0
-    } 
+    }
   )
   
   // 查出看兴趣中有看电影的员工信息
@@ -566,7 +564,7 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
       interest: 1,
       age: 1,
       _id: 0
-    } 
+    }
   )
   
   
@@ -931,7 +929,7 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   db.info.find({ $text: { $search: "\"love PlayGame\" drink" } })
   ```
 
-##  第19节：管理:用户的创建、删除与修改
+## 第19节：管理:用户的创建、删除与修改
 
 * **创建用户：**
 
@@ -1035,8 +1033,6 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   mongo  -u jspang -p 123456 127.0.0.1:27017/admin
   ```
 
-
-
 ## 第20节：管理：备份和还原
 
 * 对数据库的备份和还原: `mongodump`和`mongorestore`两个命令
@@ -1088,4 +1084,3 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
 * `NoSQL Manager for MongoDB`
 * `Studio 3T`
 * `MongoDB Compass`
-
