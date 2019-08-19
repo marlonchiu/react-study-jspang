@@ -12,6 +12,8 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
 
 学习指导：[挑战全栈 MongoDB基础视频教程 (共21集)](http://www.jspang.com/posts/2017/12/16/mongodb.html)
 
+参考：[MongoDB 教程 | 菜鸟教程](https://www.runoob.com/mongodb/mongodb-tutorial.html)
+
 ## 第01节：认识和安装MongoDB
 
 * **MongoDB是非关系型数据库**，要了解非关系型数据库就必须先了解关系型数据库，关系数据库，是建立在关系模型基础上的数据库。比较有名气的关系型数据库，比如Oracle、DB2、MSSQL、Mysql。
@@ -549,7 +551,7 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
       interest: 1,
       age: 1,
       _id: 0
-    } 
+    }
   )
   
   
@@ -779,12 +781,29 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   // 查询时间 875ms左右
   ```
 
-* **建立索引**
+* **建立索引** `createIndex()`
+
+  > *注意在 3.0.0 版本前创建索引方法为 db.collection.ensureIndex()，之后的版本使用了 db.collection.createIndex() 方法，ensureIndex() 还能用，但只是 createIndex() 的别名。*
+
+  * 语法
+
+    ```javascript
+    db.collection.createIndex(keys, options)
+
+    // 语法中 Key 值为你要创建的索引字段，1 为指定按升序创建索引，如果你想按降序来创建索引指定为 -1 即可。
+    ```
+
+  * 用法实例：
 
   ```javascript
   // 建立索引  --- 试着为用户名（username）建立索引
+  db.randomInfo.createIndex({ username: 1 })
   
+  // or
   db.randomInfo.ensureIndex({ username: 1 })
+  
+  // 复合索引
+  db.col.createIndex({"title":1,"description":-1})
   ```
 
 * **查看现有索引**
@@ -910,4 +929,108 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   // 全文搜索中是支持转义符的，比如我们想搜索的是两个词（love PlayGame和drink），这时候需要使用\斜杠来转意。
   
   db.info.find({ $text: { $search: "\"love PlayGame\" drink" } })
+  ```
+
+##  第19节：管理:用户的创建、删除与修改
+
+* **创建用户：**
+
+  首先要进入我们的`admin`库中，进入方法是直接使用`use admin `就可以。进入后可以使用`show collections`来查看数据库中的集合。默认是只有一个集合的`（system.version）`。
+
+  * 语法： `db.createUser()`
+  * 展示代码：
+
+  ```javascript
+  // 创建用户权限
+  db.createUser({  
+    user: "marlon",  
+    pwd: "123456",  
+    customData: {
+      name: 'marlon',
+      email: 'marlon@126.com',
+      age: 18,
+    },
+    roles: ['read']  
+  })
+  
+  // or
+  // 单独配置一个数据库的权限，比如我们现在要配置compay数据库的权限为读写
+  db.createUser({  
+    user: "jspang",  
+    pwd: "123456",  
+    customData: {
+      name: '技术胖',
+      email: 'web0432@126.com',
+      age: 18,
+    },
+    roles: [
+      {
+        role: "readWrite",
+        db: "company"
+      },
+      'read'
+    ]  
+  })
+  
+  
+  /**
+  内置角色：
+    数据库用户角色：read、readWrite；
+    数据库管理角色：dbAdmin、dbOwner、userAdmin;
+    集群管理角色：clusterAdmin、clusterManager、clusterMonitor、hostManage；
+    备份恢复角色：backup、restore；
+    所有数据库角色：readAnyDatabase、readWriteAnyDatabase、userAdminAnyDatabase、dbAdminAnyDatabase
+    超级用户角色：root
+    内部角色：__system
+   */
+  ```
+
+  * 数据库内置角色配置说明：
+    1. 数据库用户角色：read、readWrite；
+    2. 数据库管理角色：dbAdmin、dbOwner、userAdmin;
+    3. 集群管理角色：clusterAdmin、clusterManager、clusterMonitor、hostManage；
+    4. 备份恢复角色：backup、restore；
+    5. 所有数据库角色：readAnyDatabase、readWriteAnyDatabase、userAdminAnyDatabase、dbAdminAnyDatabase
+    6. 超级用户角色：root
+    7. 内部角色：__system
+
+* **查找用户信息** `db.system.users.find()`
+
+  ```javascript
+  // 查找用户信息
+  db.system.users.find()
+  ```
+
+* **删除用户** `db.system.users.remove({ user: "marlon" })`
+
+  ```javascript
+  // 删除用户
+  db.system.users.remove({ user: "marlon" })
+  ```
+
+* **鉴权** `db.auth(name, pwd)`
+
+  ```javascript
+  // 验证用户的用户名密码是否正确，就需要用到MongoDB提供的鉴权操作。也算是一种登录操作
+  
+  db.auth("jspang", "123456")
+  // 正确返回1，如果错误返回0。（Error：Authentication failed。）
+  ```
+
+* **启动建权** `mongod --auth`
+
+  重启MongoDB服务器，然后设置必须使用鉴权登录。
+
+  ```javascript
+  // cmd 重新启动
+
+  mongod --auth
+  ```
+
+* **登录** `mongo  -u jspang -p 123456 127.0.0.1:27017/admin`
+
+  如果在配置用户之后，用户想登录，可以使用mongo的形式，不过需要配置用户名密码：
+
+  ```javascript
+  mongo  -u jspang -p 123456 127.0.0.1:27017/admin
   ```
