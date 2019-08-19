@@ -869,3 +869,45 @@ note: MongoDB是一个基于分布式文件存储的数据库，非关系型数�
   ```
 
 ## 第18节：索引：全文索引
+
+* 准备数据
+
+* **建立全文索引**
+
+  ```javascript
+  // 建立全文索引
+  db.info.ensureIndex({ contextInfo: 'text' })
+  
+  // 需要注意的是这里使用text关键词来代表全文索引，我们在这里就不建立数据模型了
+  ```
+
+* **全文索引查找**
+
+  * 建立好了全文索引就可以查找了，查找时需要两个关键修饰符:
+
+  * `$text`: 表示要在全文索引中查东西。
+
+  * `$search`:后边跟查找的内容。
+
+    ```javascript
+    db.info.find({$text:{$search:"programmer"}})
+    ```
+
+* **查找多个词**
+
+  ```javascript
+  // 全文索引是支持多个次查找的，
+  // 查找数据中有programmer，family，diary，drink的数据（这是或的关系），所以两条数据都会出现
+  db.info.find({ $text: { $search: "programmer family diary drink" } })
+  
+  // 希望不查找出来有drink这个单词的记录，我们可以使用“-”减号来取消。
+  db.info.find({ $text: { $search: "programmer family diary -drink" } })
+  ```
+
+* **转义符：**
+
+  ```javascript
+  // 全文搜索中是支持转义符的，比如我们想搜索的是两个词（love PlayGame和drink），这时候需要使用\斜杠来转意。
+  
+  db.info.find({ $text: { $search: "\"love PlayGame\" drink" } })
+  ```
