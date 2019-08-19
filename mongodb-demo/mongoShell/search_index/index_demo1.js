@@ -10,7 +10,7 @@ function GetRandomNum(min, max) {
 
 //生成随机用户名
 function GetRadomUserName(min, max) {
-  let tempStringArray = "123456789qwertyuiopasdfghjklzxcvbnm".split("") //构造生成时的字母库数组
+  let tempStringArray = "123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM".split("") //构造生成时的字母库数组
   let outPuttext = "" // 最后输出的变量
   // 进行循环，随机生产用户名的长度，这里需要生成随机数方法的配合
   for (let i = 1; i < GetRandomNum(min, max); i++){
