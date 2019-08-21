@@ -1,7 +1,7 @@
 // React Hooks写法
 import React, { useState } from 'react';
 function ExampleHooks() {
-    const [count, setCount] = useState(0)
+    const [count, setCount] = useState(0) // 数组的解构
     return (
         <div>
             <p>you click {count} times</p>
