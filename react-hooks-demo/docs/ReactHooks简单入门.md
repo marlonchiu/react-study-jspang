@@ -130,7 +130,7 @@ export default ExampleHooks;
   export default Example4;
   ```
 
-### useReduce语法
+### useReducer语法
 
 * 简单的实现加减法
 
