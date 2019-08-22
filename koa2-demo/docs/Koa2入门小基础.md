@@ -1,5 +1,5 @@
 ---
-`title: Koa2入门小基础
+title: Koa2入门小基础
 date: '2019-08-13'
 type: 技术
 tags: Koa2
@@ -69,42 +69,42 @@ async是异步的简写，而await可以堪称async wait的简写。
 
   ```javascript
   // async是让方法变成异步，这个很好理解，关键是他的返回值是什么？我们得到后如何处理？
-  
+
   // ./demo01.js
   async function testAsync() {
       return 'Hello Async'
   }
   const result = testAsync()
   console.log(result)  // Promise { 'Hello Async' }
-  
+
   // 输出了Promise { ‘Hello Async’ }，这时候会发现它返回的是Promise
   ```
 
 * **await在等什么？**
 
   await一般在等待async方法执行完毕，但是其实await等待的只是一个表达式，这个表达式在官方文档里说的是Promise对象，可是它也可以接受普通值。
-  
+
   **await必须在async方法中才可以使用**
-  
+
   **await接收Promise对象，也可以接收普通值**
-  
+
   ```javascript
   // ./demo02.js
-  
+
   function getSomething(){
       return 'something'
   }
-  
+
   async function testAsync() {
       return 'Hello Async'
   }
-  
+
   async function test() {
       const res1 = await getSomething()
       const res2 = await testAsync()
       console.log(res1, res2)
   }
-  
+
   // 执行
   test()  // something Hello Async
   ```
@@ -137,7 +137,7 @@ test()
 * 在koa2中GET请求通过request接收，但是接受的方法有两种：query和querystring。
   * query：返回的是格式化好的参数对象。
   * querystring：返回的是请求字符串。
-  
+
 * 从 `ctx.request` 中获取Get请求
 
     ```javascript
@@ -177,7 +177,7 @@ test()
 
   ```javascript
   // 从ctx中得到GET请求。ctx中也分为query和querystring
-  
+
   const Koa = require('koa')
   const app = new Koa()
   app.use(async (ctx) => {
@@ -187,7 +187,7 @@ test()
       let request = ctx.request
       let req_query = request.query
       let req_querystring = request.querystring
-  
+
       //从上下文中直接获取
       let ctx_query = ctx.query
       let ctx_querystring = ctx.querystring
@@ -200,15 +200,15 @@ test()
           ctx_querystring
       }
   })
-  
+
   app.listen(3000, () => {
       console.log('[demo] server is starting at port 3000')
   })
-  
+
   /**
    // 20190813114559
   // http://127.0.0.1:3000/?user=jspang&age=18
-  
+
   {
     "url": "/?user=jspang&age=18",
     "req_query": {
@@ -222,7 +222,7 @@ test()
     },
     "ctx_querystring": "user=jspang&age=18"
   }
-  
+
   * */
   ```
 
@@ -249,12 +249,12 @@ test()
 
   ```javascript
   // ctx.method 得到请求类型
-  
+
   // Koa2中提供了ctx.method属性，可以轻松的得到请求的类型，
   // 然后根据请求类型编写不同的相应方法
-  
+
   // ./post_demo01.js
-  
+
   const Koa = require('koa')
   const app = new Koa()
   app.use(async (ctx) => {
@@ -279,18 +279,18 @@ test()
       ctx.body = '<h1>404 page!</h1>'
     }
   })
-  
+
   app.listen(3000, () => {
       console.log('[demo] server is starting at port 3000')
   })
-  
+
   /**
   浏览器中输入http://127.0.0.1:3000进行查看，
     第一次进入时给我们展现的是一个表单页面，
     我们点击提交后可以看到服务器接收到了我们的信息，但我们并没有做出任何处理。
     当我们下输入一个地址时，它会提示404错误。
   * */
-  
+
   // **总结：**从理论上讲解了如何获取POST请求参数
   ```
 
@@ -302,7 +302,7 @@ test()
 
   ```javascript
   // ./post_demo2.js
-  
+
   // 解析Node原生POST参数
   // 声明一个方法，然后用Promise对象进行解析。这里我们使用了ctx.req.on来接收事件
   function parsePostData(ctx) {
@@ -328,7 +328,7 @@ test()
   // ctx.body = '接收到POST请求'
   let postdata = await parsePostData(ctx)  // userName=jspang&age=123&webSite=www.douban.com
   ctx.body = postdata
-  
+
   // 页面就输出刚才填的表单  userName=jspang&age=123&webSite=www.douban.com
   ```
 
@@ -336,14 +336,14 @@ test()
 
   ```javascript
   // ./post_demo2.js
-  
+
   // POST字符串解析JSON对象
   // 字符串封装JSON兑现对象的方法
   // userName=jspang&age=123&webSite=www.douban.com
   function parseQueryStr(queryStr) {
     let queryData = {}
     // split() 方法使用指定的分隔符字符串将一个String对象分割成字符串数组，
-    // 以将字符串分隔为子字符串，以确定每个拆分的位置。 
+    // 以将字符串分隔为子字符串，以确定每个拆分的位置。
     let queryStrList = queryStr.split('&')
     // console.log(queryStrList)
     // entries() 方法返回一个新的Array Iterator对象，该对象包含数组中每个索引的键/值对
@@ -354,29 +354,29 @@ test()
     }
     return queryData
   }
-  
-  
+
+
   // 在上述解析Node原生POST参数中修改
   ctx.req.addListener('end', function () {
       // resolve(postdata)
       let parseData = parseQueryStr(postdata)
       resolve(parseData)
   })
-  
+
   /**
   使用for…of 循环
   var arr = ["a", "b", "c"];
   var iterator = arr.entries();
-  
+
   for (let e of iterator) {
     console.log(e);
   }
-  
-  // [0, "a"] 
-  // [1, "b"] 
+
+  // [0, "a"]
+  // [1, "b"]
   // [2, "c"]
   */
-  
+
   // node运行，浏览器http://127.0.0.1:3000，先填写表单，然后页面就会返回
   /*
   {
@@ -405,7 +405,7 @@ test()
   var arr = ["a", "b", "c"];
   var iterator = arr.entries();
   console.log(iterator);
-  
+
   /*Array Iterator {}
            __proto__:Array Iterator
            next:ƒ next()
@@ -417,10 +417,10 @@ test()
 * `iterator.next()`
 
   ```javascript
-  var arr = ["a", "b", "c"]; 
+  var arr = ["a", "b", "c"];
   var iterator = arr.entries();
   console.log(iterator.next());
-  
+
   /*{value: Array(2), done: false}
             done:false
             value:(2) [0, "a"]
@@ -439,8 +439,8 @@ test()
   var arr = ["a", "b", "c"];
   var iter = arr.entries();
   var a = [];
-  
-  // for(var i=0; i< arr.length; i++){   // 实际使用的是这个 
+
+  // for(var i=0; i< arr.length; i++){   // 实际使用的是这个
   for(var i=0; i< arr.length+1; i++){    // 注意，是length+1，比数组的长度大
       var tem = iter.next();             // 每次迭代时更新next
       console.log(tem.done);             // 这里可以看到更新后的done都是false
@@ -470,10 +470,10 @@ test()
       }
       return arr;
   }
-  
+
   var arr = [[1,34],[456,2,3,44,234],[4567,1,4,5,6],[34,78,23,1]];
   sortArr(arr);
-  
+
   /*(4) [Array(2), Array(5), Array(5), Array(4)]
       0:(2) [1, 34]
       1:(5) [2, 3, 44, 234, 456]
@@ -490,11 +490,11 @@ test()
   var arr = ["a", "b", "c"];
   var iterator = arr.entries();
   // undefined
-  
+
   for (let e of iterator) {
       console.log(e);
   }
-  
+
   // [0, "a"]
   // [1, "b"]
   // [2, "c"]
@@ -508,38 +508,38 @@ test()
 
   ```bash
   # 使用npm进行安装，需要注意的是我们这里要用–save，因为它在生产环境中需要使用。
-  
+
   npm install --save koa-bodyparser@3
   ```
 
 * **引入使用**
 
   安装完成后，需要在代码中引入并使用。我们在代码顶部用require进行引入。
-  
+
   ```javascript
   const bodyParser = require('koa-bodyparser')
   ```
-  
+
   然后进行使用，如果不使用是没办法调用的，使用代码如下。
-  
+
   ```javascript
   app.use(bodyParser())
   ```
-  
+
   在代码中使用后，直接可以用`ctx.request.body`进行获取POST请求参数，中间件自动给我们作了解析。
-  
+
 * 用例：
 
   ```javascript
   // Post请求解析中间件   koa-bodyparser
-  
+
   // ./bodyparser_demo.js
-  
+
   const Koa = require('koa')
   const bodyParser = require('koa-bodyparser')
   const app = new Koa()
   app.use(bodyParser())
-  
+
   app.use(async (ctx) => {
     // 当请求是GET请求，显示表单让用户填写
     if (ctx.url === '/' && ctx.method === 'GET') {
@@ -564,7 +564,7 @@ test()
       ctx.body = '<h1>404 page!</h1>'
     }
   })
-  
+
   app.listen(3000, () => {
       console.log('[demo] server is starting at port 3000')
   })
@@ -577,18 +577,18 @@ test()
   ```javascript
   // ctx.request.url
   // 地址栏输入的路径，然后根据路径的不同进行跳转
-  
+
   const Koa = require('koa')
   const app = new Koa()
   app.use(async (ctx) => {
     let url = ctx.request.url
     ctx.body = url
   })
-  
+
   app.listen(3000, () => {
       console.log('[demo] server is starting at port 3000')
   })
-  
+
   // 访问http://127.0.0.1:3000/jspang/18 页面会输出/jspang/18
   ```
 
@@ -598,10 +598,10 @@ test()
 
   ```javascript
   // Koa2原生路由实现
-  
+
   // ctx.request.url
   // 地址栏输入的路径，然后根据路径的不同进行跳转
-  
+
   function render(page) {
     return new Promise((resolve, reject) => {
       let pageUrl = `./page/${page}`
@@ -615,7 +615,7 @@ test()
       })
     })
   }
-  
+
   async function route(url) {
     let page = '404.html'
     switch (url) {
@@ -634,21 +634,21 @@ test()
       default:
         break
     }
-  
+
     let html = await render(page)
     return html
   }
-  
+
   const Koa = require('koa')
   const app = new Koa()
   const fs = require('fs')
-  
+
   app.use(async (ctx) => {
     let url = ctx.request.url
     let html = await route(url)
     ctx.body = html
   })
-  
+
   app.listen(3000, () => {
     console.log('[demo] server is starting at port 3000')
   })
@@ -718,17 +718,17 @@ app.listen(3000, () => {
 
   ```javascript
   // Koa-router 层级
-  
+
   // ./koa-router2.js
-  
+
   const Koa = require('koa')
   const Router = require('koa-router')
-  
+
   const app = new Koa()
   // const router = new Router({
   //   // prefix: '/jspang'  // 设置前缀
   // })
-  
+
   // 设置路由层级
   let home = new Router()
   home
@@ -738,7 +738,7 @@ app.listen(3000, () => {
     .get('/todo', async (ctx, next) => {   // 路由多页面配置
       ctx.body = 'Home Todo'
     })
-  
+
   let page = new Router()
   page
     .get('/jspang',(ctx, next) => {  // async 异步不异步都可以
@@ -747,17 +747,17 @@ app.listen(3000, () => {
     .get('/todo',(ctx, next) => {   // 路由多页面配置
       ctx.body = 'Page Todo'
     })
-  
+
   // 装载所有子路由  router.use(‘/page’, page.routes(), page.allowedMethods())
   // 设置父路由
   let router = new Router()
   router.use('/home', home.routes(), home.allowedMethods())
   router.use('/page', page.routes(), page.allowedMethods())
-  
+
   // 挂载路由中间件
   app.use(router.routes())
     .use(router.allowedMethods())
-  
+
   app.listen(3000, () => {
     console.log('[demo] server is starting at port 3000')
   })
@@ -769,29 +769,29 @@ app.listen(3000, () => {
 
   ```javascript
   // Koa-router 参数
-  
+
   // ./koa-router3.js
-  
+
   const Koa = require('koa')
   const Router = require('koa-router')
-  
+
   const app = new Koa()
   const router = new Router()
-  
+
   router
     .get('/', (ctx, next) => {
       // 获取 get 请求参数
       ctx.body = ctx.query
     })
-  
+
   // 挂载路由中间件
   app.use(router.routes())
     .use(router.allowedMethods())
-  
+
   app.listen(3000, () => {
     console.log('[demo] server is starting at port 3000')
   })
-  
+
   // 地址栏输出 http://127.0.0.1:3000/?user=jspang&age=18
   /*
   {
@@ -835,7 +835,7 @@ app.listen(3000, () => {
 
   ```bash
   # 安装中间件
-  
+
   npm install --save koa-views
   ```
 
@@ -843,7 +843,7 @@ app.listen(3000, () => {
 
   ```bash
   # 安装ejs模板引擎
-  
+
   npm install --save ejs
   ```
 
@@ -851,9 +851,9 @@ app.listen(3000, () => {
 
   ```javascript
   // 为了模板统一管理，我们新建一个view的文件夹，并在它下面新建index.ejs文件。
-  
+
   // ./views/index.ejs
-  
+
   <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -874,25 +874,25 @@ app.listen(3000, () => {
   ```javascript
   // ejs模板
   // ./ejs_demo.js
-  
+
   const Koa = require('koa')
   const views = require('koa-views')
   const path = require('path')
   const app = new Koa()
-  
+
   // 加载模板引擎
   app.use(views(path.join(__dirname, './views'), {
     extension: 'ejs'
   }))
-  
+
   app.use(async (ctx) => {
     let title = 'HELLO Koa2'
     await ctx.render('index', {
       title
     })
   })
-  
-  
+
+
   app.listen(3000, () => {
     console.log('[demo] server is starting at port 3000')
   })
@@ -916,23 +916,23 @@ app.listen(3000, () => {
   const Koa = require('koa')
   const path = require('path')
   const static = require('koa-static')
-  
+
   const app = new Koa()
-  
+
   // 声明静态路径
   const staticPath = './static'
-  
+
   app.use(static(
       path.join(__dirname, staticPath)
   ))
-  
+
   app.use(async (ctx) => {
       ctx.body = 'hello world'
   })
-  
+
   app.listen(3000, () => {
       console.log('[demo] server is starting at port 3000')
   })
-  
+
   // 访问图片直接 http://127.0.0.1:3000/koa2.jpg
   ```

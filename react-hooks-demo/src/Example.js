@@ -1,6 +1,7 @@
 // 基础写法
 
 import React, { Component } from 'react';
+
 class Example extends Component {
     constructor(props) {
         super(props);
@@ -9,6 +10,14 @@ class Example extends Component {
         }
         this.handleAddCount = this.handleAddCount.bind(this)
     }
+
+    componentDidMount = () => {
+        console.log(`componentDidMount=>You clicked ${this.state.count} times`)
+    };
+    componentDidUpdate(prevProps, prevState) {
+        console.log(`componentDidUpdate=>You clicked ${this.state.count} times`)
+    }
+
     render() { 
         const { count } = this.state
         return ( 
