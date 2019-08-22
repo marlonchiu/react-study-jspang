@@ -39,7 +39,6 @@ export default ExampleHooks;
   * React首次渲染和之后的每次渲染都会调用一遍`useEffect`函数，而之前我们要用两个生命周期函数分别表示首次渲染(`componentDidMonut`)和更新导致的重新渲染(`componentDidUpdate`)。
   * `useEffect`中定义的函数的执行不会阻碍浏览器更新视图，也就是说这些函数时异步执行的，而`componentDidMonut`和`componentDidUpdate`中的代码都是同步执行的。个人认为这个有好处也有坏处吧，比如我们要根据页面的大小，然后绘制当前弹出窗口的大小，如果时异步的就不好操作了
   
-
 * `useEffect`第二个参数：
 
   * `useEffect`的第二个参数，它是一个数组，数组中可以写入很多状态对应的变量，意思是当状态值发生变化时，我们才进行解绑。
@@ -95,4 +94,67 @@ export default ExampleHooks;
        );
   }
   export default ExampleHooks3;
+  ```
+
+### `useContext` 让父子组件传值更简单
+
+* `useContext`，它可以帮助我们跨越组件层级直接传递变量，实现共享。
+
+* 需要注意的是`useContext`和`redux`的作用是不同的，一个解决的是组件之间值传递的问题，一个是应用中统一管理状态的问题，但通过和`useReducer`的配合使用，可以实现类似`Redux`的作用
+
+* 代码展示：
+
+  ```javascript
+  // React Hooks写法
+  import React, { useState, createContext, useContext } from 'react';
+  function Child() {
+      const count = useContext(CountContext)  // 得到count
+      return <h2>子组件接收到的值：{count}</h2>
+  }
+  // 引入createContext函数，并使用得到一个组件CountContext
+  const CountContext = createContext()
+  
+  function Example4() {
+      const [count, setCount] = useState(0) // 数组的解构
+      return (
+          <div>
+              <p>you click {count} times</p>
+              <button onClick={() => setCount(count + 1)}>Click Me</button>
+              {/*======关键代码 */}
+              <CountContext.Provider value={count}>
+                  <Child></Child>
+              </CountContext.Provider>
+          </div>
+       );
+  }
+  export default Example4;
+  ```
+
+### useReduce语法
+
+* 简单的实现加减法
+
+  ```javascript
+  import React, { useReducer} from 'react';
+  
+  function Example5() {
+      const [count, dispatch] = useReducer((state, action) => {
+          switch (action) {
+              case 'increment':
+                  return state + 1
+              case 'decrement':
+                  return state - 1
+              default:
+                  return state
+          }
+      }, 60) 
+      return (
+          <div>
+              <p>现在的值是： {count}</p>
+              <button onClick={() => dispatch('increment')}>加一</button>
+              <button onClick={() => dispatch('decrement')}>减一</button>
+          </div>
+       );
+  }
+  export default Example5;
   ```
