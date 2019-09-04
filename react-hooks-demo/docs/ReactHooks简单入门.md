@@ -29,7 +29,7 @@ function ExampleHooks() {
 export default ExampleHooks;
 ```
 
-##  入门语法
+## 入门语法
 
 ### `useState`: 状态声明
 
@@ -77,7 +77,7 @@ export default ExampleHooks;
               console.log('====================')
           }
       }, [count])
-      
+
       return (
           <div>
               <p>you click {count} times</p>
