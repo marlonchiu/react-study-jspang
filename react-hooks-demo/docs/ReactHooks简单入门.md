@@ -9,9 +9,11 @@ note: React Hooks改变了原始的React类的开发方式，改用了函数形�
 ---
 
 # ReactHooks简单入门
+
 学习指导：[React Hooks 免费视频教程 (共9集)](https://jspang.com/posts/2019/08/12/react-hooks.html)
 
 ## 简单上手
+
 ```javascript
 // ./ExampleHooks.js
 
@@ -33,11 +35,15 @@ export default ExampleHooks;
 
 ### `useState`: 状态声明
 
+* useState是react自带的一个hook函数，它的作用是用来声明状态变量。
+* **React是根据useState出现的顺序来确定的**
+* **React Hooks不能出现在条件判断语句中，因为它必须有完全一样的渲染顺序**。
+
 ### `useEffect`: 代替生命周期函数
 
 * `useEffect`两个注意点
   * React首次渲染和之后的每次渲染都会调用一遍`useEffect`函数，而之前我们要用两个生命周期函数分别表示首次渲染(`componentDidMonut`)和更新导致的重新渲染(`componentDidUpdate`)。
-  * `useEffect`中定义的函数的执行不会阻碍浏览器更新视图，也就是说这些函数时异步执行的，而`componentDidMonut`和`componentDidUpdate`中的代码都是同步执行的。个人认为这个有好处也有坏处吧，比如我们要根据页面的大小，然后绘制当前弹出窗口的大小，如果时异步的就不好操作了
+  * `useEffect`中定义的函数的**执行不会阻碍浏览器更新视图**，也就是说这些函数时**异步执行**的，而`componentDidMonut`和`componentDidUpdate`中的代码都是同步执行的。个人认为这个有好处也有坏处吧，比如我们要根据页面的大小，然后绘制当前弹出窗口的大小，如果时异步的就不好操作了
   
 * `useEffect`第二个参数：
 
@@ -105,29 +111,29 @@ export default ExampleHooks;
 * 代码展示：
 
   ```javascript
-  // React Hooks写法
+  // useContext 让父子组件传值更简单
   import React, { useState, createContext, useContext } from 'react';
   function Child() {
-      const count = useContext(CountContext)  // 得到count
-      return <h2>子组件接收到的值：{count}</h2>
+    const count = useContext(CountContext)   // 得到count
+    return <h2>子组件接收到的值：{count}</h2>
   }
-  // 引入createContext函数，并使用得到一个组件CountContext
-  const CountContext = createContext()
   
-  function Example4() {
-      const [count, setCount] = useState(0) // 数组的解构
-      return (
-          <div>
-              <p>you click {count} times</p>
-              <button onClick={() => setCount(count + 1)}>Click Me</button>
-              {/*======关键代码 */}
-              <CountContext.Provider value={count}>
-                  <Child></Child>
-              </CountContext.Provider>
-          </div>
-       );
+  const CountContext = createContext()
+  function Example() {
+    const [count, setCount] = useState(0) // 数组的解构
+    return (
+      <div>
+        <p>you click {count} times</p>
+        <button onClick={() => setCount(count + 1)}>Click Me</button>
+        {/*======关键代码 */}
+        {/* 将要传递的值放入标签中 */}
+        <CountContext.Provider value={count}>  
+          <Child></Child>
+        </CountContext.Provider>
+      </div>
+    );
   }
-  export default Example4;
+  export default Example;
   ```
 
 ### useReducer语法
@@ -135,26 +141,42 @@ export default ExampleHooks;
 * 简单的实现加减法
 
   ```javascript
+  // useReducer 实现redux效果
+  
   import React, { useReducer} from 'react';
   
-  function Example5() {
-      const [count, dispatch] = useReducer((state, action) => {
-          switch (action) {
-              case 'increment':
-                  return state + 1
-              case 'decrement':
-                  return state - 1
-              default:
-                  return state
-          }
-      }, 60) 
-      return (
-          <div>
-              <p>现在的值是： {count}</p>
-              <button onClick={() => dispatch('increment')}>加一</button>
-              <button onClick={() => dispatch('decrement')}>减一</button>
-          </div>
-       );
+  function Example() {
+    // useReducer 接收两个值一个是状态函数  一个初始值
+    const [count, dispatch] = useReducer((state, action) => {
+      switch (action) {
+        case 'increment':
+          return state + 1
+        case 'decrement':
+          return state - 1
+        default:
+          return state
+      }
+    }, 60) 
+    
+    return (
+      <div>
+        <p>现在的值是： {count}</p>
+        <button onClick={() => dispatch('increment')}>加一</button>
+        <button onClick={() => dispatch('decrement')}>减一</button>
+      </div>
+      );
   }
-  export default Example5;
+  export default Example;
+  
+  // 简易实现 reducer
+  // function countReducer(state, action) {
+  //   switch (action.type) {
+  //     case 'increment':
+  //       return state + 1
+  //     case 'decrement':
+  //       return state - 1
+  //     default:
+  //       return state
+  //   }
+  // }
   ```
