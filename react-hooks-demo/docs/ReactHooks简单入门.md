@@ -156,8 +156,7 @@ export default ExampleHooks;
         default:
           return state
       }
-    }, 60) 
-    
+    }, 60)
     return (
       <div>
         <p>现在的值是： {count}</p>
@@ -179,4 +178,103 @@ export default ExampleHooks;
   //       return state
   //   }
   // }
+  ```
+
+### useReducer代替Redux小案例
+
+* 使用 `useContext` 和 `useReducer`是可以实现类似`Redux`的效果
+
+* 理论上的可行性
+  * 我们先从理论层面看看替代Redux的可能性，其实如果你对两个函数有所了解，只要我们巧妙的结合，这种替代方案是完全可行的。
+  * `useContext`：可访问全局状态，避免一层层的传递状态。这符合Redux其中的一项规则，就是状态全局化，并能统一管理。
+  * `useReducer`：通过action的传递，更新复杂逻辑的状态，主要是可以实现类似Redux中的Reducer部分，实现业务逻辑的可行性。
+
+* 代码第一节
+
+  ```javascript
+  
+  
+  // ShowArea.js
+  import React, { useContext } from 'react'
+  import { ColorContext } from './Color'
+  
+  function ShowArea() {
+    const { color } = useContext(ColorContext)
+    return (
+      <div style={{color: color}}>
+        字体的颜色是{color}
+      </div>
+    )
+  }
+  
+  export default ShowArea
+  
+  
+  
+  // Color.js
+  import React, { createContext } from 'react';
+  
+  export const ColorContext = createContext({})
+  
+  export const Color = props => {
+    return (
+      <ColorContext.Provider value={{ color: 'pink' }}>
+        {props.children}
+      </ColorContext.Provider>
+    )
+  }
+  ```
+
+* 核心代码第二节
+
+  ```javascript
+  // Color.js
+  
+  import React, { createContext, useReducer} from 'react';
+  
+  export const ColorContext = createContext({})
+  
+  // 核心代码 --start
+  export const UPDATE_COLOR = "UPDATE_COLOR"
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case UPDATE_COLOR:
+        return action.color
+      default:
+        return state
+    }
+  }
+  // 核心代码 --end
+  
+  export const Color = props => {
+    // 解构赋值
+    // 核心代码 --start
+    const [color, dispatch] = useReducer(reducer, 'blue')
+    // 核心代码 --end
+    return (
+      <ColorContext.Provider value={{ color, dispatch }}>
+        {props.children}
+      </ColorContext.Provider>
+    )
+  }
+
+  
+  // Buttons.js
+  
+  import React, {useContext} from 'react'
+  import { ColorContext, UPDATE_COLOR } from './Color'
+  
+  function Buttons() {
+    // 核心代码 --start
+    const { dispatch } = useContext(ColorContext)
+    // 核心代码 --end
+    return (
+      <div>
+        <button onClick={() =>{dispatch({type:UPDATE_COLOR, color: 'red'})}}>红色</button>
+        <button onClick={() =>{dispatch({type:UPDATE_COLOR, color: 'purple'})}}>紫色</button>
+      </div>
+    )
+  }
+  
+  export default Buttons
   ```
