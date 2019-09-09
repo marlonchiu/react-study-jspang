@@ -3,7 +3,7 @@ import ShowArea from './ShowArea'
 import Buttons from './Buttons'
 import {Color} from './Color'
 
-function Example6() {
+function Example() {
   return (
     <Color>
       <ShowArea />
@@ -12,4 +12,4 @@ function Example6() {
   )
 }
 
-export default Example6
+export default Example

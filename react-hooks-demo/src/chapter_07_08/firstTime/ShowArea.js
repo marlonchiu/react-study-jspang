@@ -4,7 +4,7 @@ function ShowArea() {
   const {color} = useContext(ColorContext)
   return (
     <div style={{color: color}}>
-      字体颜色为：blue
+      字体颜色为：{color}
     </div>
   )
 }
