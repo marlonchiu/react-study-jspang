@@ -278,3 +278,58 @@ export default ExampleHooks;
   
   export default Buttons
   ```
+
+### useMemo优化React Hooks程序性能
+
+* `useMemo`主要用来解决使用React hooks产生的无用渲染的性能问题。
+
+* 使用function的形式来声明组件，失去了`shouldCompnentUpdate`（在组件更新之前）这个生命周期，也就是说我们没有办法通过组件更新前条件来决定组件是否更新。而且在函数组件中，也不再区分`mount`和`update`两个状态，这意味着函数组件的每一次调用都会执行内部的所有逻辑，就带来了非常大的性能损耗。`useMemo`和`useCallback`都是解决上述性能问题的.
+
+* 核心代码
+
+  ```javascript
+  // useMemo 优化性能
+  // 使用useMemo，然后给她传递第二个参数，参数匹配成功，才会执行
+  const actionXiaohong = useMemo(() => changeXiaohong(name), [name])
+  ```
+
+### useRef获取DOM元素和保存变量
+
+* `useRef`有两个主要的作用:
+  * 用`useRef`获取React JSX中的DOM元素，获取后你就可以控制DOM的任何东西了。但是一般不建议这样来作，React界面的变化可以通过状态来控制。
+  * 用`useRef`来保存变量
+* 代码展示
+
+  ```javascript
+  import React, { useRef, useState, useEffect } from 'react';
+  
+  function Example() {
+    const inputEl = useRef(null)
+  
+    const onButtonClick = () => {
+      inputEl.current.value = 'hello Jspang'
+      console.log(inputEl) //输出获取到的DOM节点
+    }
+  
+    // useRef保存普通变量
+    const [text, setText] = useState('hello')
+    const textRef = useRef()
+    useEffect(() => {
+      textRef.current = text
+      console.log('textRef.current:', textRef.current)
+    })
+  
+    return (
+      <>
+        {/*保存input的ref到inputEl */}
+        <input ref={inputEl} type='text' />
+        <button onClick={onButtonClick}>在input上展示文字</button>
+        <br/>
+        <br />
+        <input type='text' value={text} onChange={(e)=>{setText(e.target.value)}}/>
+      </>
+    )
+  }
+  
+  export default Example
+  ```
