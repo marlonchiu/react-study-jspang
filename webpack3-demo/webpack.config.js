@@ -19,6 +19,15 @@ module.exports = {
   // 插件，用于生产模版和各项功能
   plugins: [],
   // 配置webpack开发服务功能
-  devServer: {}
+  devServer: {
+    // 配置服务器基本运行路径，用于找到程序打包地址
+    contentBase: path.resolve(__dirname, 'dist'),
+    // 服务器的IP地址，可以使用IP也可以使用localhost
+    host: 'localhost',
+    // 配置服务端口
+    port: 1717,
+    // 服务端是否开启压缩
+    compress: true
+  }
 }
 

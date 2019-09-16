@@ -1,1 +1,1 @@
-document.getElementById('title').innerHTML = 'Hello Webpack';
+document.getElementById('title').innerHTML = 'Hello Webpack!';
