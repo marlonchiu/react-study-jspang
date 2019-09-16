@@ -36,6 +36,17 @@ module.exports = {
             loader: 'css-loader'
           }
         ]
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10 * 1024  // 100kb以下的会被base64
+            }
+          }
+        ]
       }
     ]
   },

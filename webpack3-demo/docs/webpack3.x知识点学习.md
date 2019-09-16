@@ -101,3 +101,21 @@
   * minify：是对html文件进行压缩，removeAttrubuteQuotes是却掉属性的双引号。
   * hash：为了开发中js有缓存效果，所以加入hash，这样可以有效避免缓存JS。
   * template：是要打包的html模版路径和文件名称。
+
+## 第08节：图片迈坑：CSS中的图片处理
+
+* 下载依赖
+
+  ```bash
+  npm install --save-dev file-loader url-loader
+  ```
+
+* loader 说明
+  * **`file-loader`**：解决引用路径的问题
+  * **`url-loade`**：将引入的图片编码，生成dataURl
+
+* url-loader和file-loader是什么关系呢？
+
+  简答地说，url-loader封装了file-loader。url-loader不依赖于file-loader，即使用url-loader时，只需要安装url-loader即可，不需要安装file-loader，因为url-loader内置了file-loader。通过上面的介绍，我们可以看到，url-loader工作分两种情况：
+  1.文件大小小于limit参数，url-loader将会把文件转为DataURL（Base64格式）；
+  2.文件大小大于limit，url-loader会调用file-loader进行处理，参数也会直接传给file-loader。
