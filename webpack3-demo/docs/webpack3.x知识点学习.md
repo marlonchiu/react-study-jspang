@@ -71,3 +71,36 @@
   ```
 
   
+
+## 第07节：插件配置：HTML文件的发布
+
+* 下载依赖
+
+  ```bash
+  npm
+  ```
+
+* 配置
+
+  ```javascript
+  const htmlPlugin = require('html-webpack-plugin')  
+  
+  // 插件，用于生产模版和各项功能
+    plugins: [
+      // 配置js压缩（webpack 4.x 默认启用js压缩）
+      // new Uglify(),
+      new htmlPlugin({
+        minify: {
+          removeAttributeQuotes: true
+        },
+        hash: true,
+        template: './src/index.html'
+      })
+    ],
+  ```
+
+* 配置说明
+
+  * minify：是对html文件进行压缩，removeAttrubuteQuotes是却掉属性的双引号。
+  * hash：为了开发中js有缓存效果，所以加入hash，这样可以有效避免缓存JS。
+  * template：是要打包的html模版路径和文件名称。
