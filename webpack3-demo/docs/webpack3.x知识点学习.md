@@ -70,14 +70,12 @@
     },
   ```
 
-  
-
 ## 第07节：插件配置：HTML文件的发布
 
 * 下载依赖
 
   ```bash
-  npm
+  npm install --save-dev html-webpack-plugin
   ```
 
 * 配置
@@ -100,7 +98,6 @@
   ```
 
 * 配置说明
-
   * minify：是对html文件进行压缩，removeAttrubuteQuotes是却掉属性的双引号。
   * hash：为了开发中js有缓存效果，所以加入hash，这样可以有效避免缓存JS。
   * template：是要打包的html模版路径和文件名称。
