@@ -3,6 +3,8 @@ const path = require('path')
 const HtmlPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const glob = require('glob')
+const PurifyCSSPlugin = require('purifycss-webpack')
 
 var website = {
   publicPath:"http://10.0.192.93:1717/"
@@ -59,8 +61,12 @@ module.exports = {
             }
           },
           {
-            loader: 'css-loader'
-          }
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          'postcss-loader'
         ]
       },
       {
@@ -138,13 +144,23 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
       chunkFilename: '[id].css',
-      ignoreOrder: false // Enable to remove warnings about conflicting order
+      ignoreOrder: false, // Enable to remove warnings about conflicting order
+      use: [
+        {
+          loader: 'css-loader'
+        },
+        'postcss-loader'
+      ]
     }),
     // 抽取 less /css/index.css是分离后的路径位置
     new MiniCssExtractPlugin({
-      filename: 'css/[name].less',
+      filename: 'css/black.less',
       chunkFilename: '[id].less',
       ignoreOrder: false // Enable to remove warnings about conflicting order
+    }),
+    // 消除未使用的css
+    new PurifyCSSPlugin({
+      paths: glob.sync(path.join(__dirname,'src/*.html'))
     })
   ],
   // 配置webpack开发服务功能

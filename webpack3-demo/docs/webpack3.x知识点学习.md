@@ -246,4 +246,35 @@
     ],
   ```
 
+## 第13节：CSS进阶：自动处理CSS3属性前缀
+
+* 依赖
+
+  ```bash
+  npm install --save-dev postcss-loader autoprefixer
+  ```
+
+## 第14节：CSS进阶：消除未使用的CSS
+
+* 依赖
+
+  ```bash
+   npm install --save-dev purifycss-webpack purify-css
+  ```
+
+* 配置
+
+  ```javascript
+  const glob = require('glob')
+  const PurifyCSSPlugin = require('purifycss-webpack')
+  
+  // 插件，用于生产模版和各项功能
+  plugins: [
+      // 消除未使用的css
+      new PurifyCSSPlugin({
+          paths: glob.sync(path.join(__dirname,'src/*.html'))
+      })
+  ],
+  ```
+
   
