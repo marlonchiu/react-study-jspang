@@ -362,3 +362,67 @@
   * `eval-source-map`:使用eval打包源文件模块，在同一个文件中生产干净的完整版的sourcemap，但是对打包后输出的JS文件的执行具有性能和安全的隐患。在**开发阶段**这是一个非常好的选项，在生产阶段则一定要不开启这个选项。
   * `cheap-module-eval-source-map`:这是在打包文件时最快的生产source map的方法，生产的 Source map 会和打包后的JavaScript文件同行显示，没有影射列，和eval-source-map选项具有相似的缺点。
   
+* 如果大型项目可以使用source-map，如果是中小型项目使用eval-source-map就完全可以应对，需要强调说明的是，source map只适用于开发阶段，上线前记得修改这些调试设置。
+
+## 第17节：实战技巧：开发和生产并行设置
+
+* **依赖不同**：一个项目中是有开发环境和生产环境的，这两个环境的依赖也是不同的。
+  * 开发依赖：只在开发中用来帮助你进行开发，简化代码或者生成兼容设置的以来包。你可以打开package.json来查看，devDependencies的下面的这些包为开发使用的包。这些包在生产环境中并没有用处。
+  * 生产依赖：就是比如我们的js使用了jquery，jquery的程序要在浏览器端起作用，也就是说我们最终的程序也需要这个包，这就是生产依赖。这些包在dependencies中
+
+* 安装依赖包
+
+  ```bash
+  # 安装全部项目依赖包：
+  npm install
+   
+  # 安装生产环境依赖包：
+  npm install --production
+  ```
+
+* **配置生产和开发并行**
+
+  * **修改package.json命令**
+
+    ```json
+    "scripts": {
+        "server": "webpack-dev-server --open",
+        "dev": "set type=dev&webpack",
+        "build": "set type=build&webpack"
+      },
+
+    //  可以传递指令
+    ```
+
+  * **修改webpack.config.js文件**
+
+    ```javascript
+    // 可以利用node的语法来读取type的值，然后根据type的值用if–else判断
+    // 查看传值(node语法)
+
+    console.log(encodeURIComponent(process.env.type))
+
+    var website
+    if (process.env.type === 'dev') {
+      website = {
+        publicPath: "http://10.0.192.93:1717/"
+      }
+    } else {
+      website = {
+        publicPath: "http://cdn.jspang.com/"
+      }
+    }
+    console.log(website)
+    ```
+
+  * **Mac下的package.json设置**
+
+    ```json
+    // MAC电脑下需要把set换成export，并且要多加一个&符
+
+    "scripts": {
+        "server": "webpack-dev-server --open",
+        "dev": "export type=dev&&webpack",
+        "build": "export type=build&&webpack"
+    },
+    ```

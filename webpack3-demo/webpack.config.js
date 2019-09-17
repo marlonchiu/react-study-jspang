@@ -6,9 +6,20 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const glob = require('glob')
 const PurifyCSSPlugin = require('purifycss-webpack')
 
-var website = {
-  publicPath: "http://10.0.192.93:1717/"
+console.log(encodeURIComponent(process.env.type))
+var website
+if (process.env.type === 'dev') {
+  website = {
+    publicPath: "http://10.0.192.93:1717/"
+  }
+} else {
+  website = {
+    publicPath: "http://cdn.jspang.com/"
+  }
 }
+console.log(website)
+
+
 
 module.exports = {
   devtool: 'source-map',
