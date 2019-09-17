@@ -5,6 +5,7 @@
 * [Webpack3.X版 成神之路 (共24集)](https://jspang.com/posts/2017/09/16/webpack3.html)
 * [入门 Webpack，看这篇就够了](https://segmentfault.com/a/1190000006178770)
 * [官方文档](https://www.webpackjs.com/concepts/)
+* [webpack4系列教程](https://www.jianshu.com/p/46d09ac4c8f2)
 
 ## 其他知识
 
@@ -282,7 +283,26 @@
 * 依赖
 
   ```bash
-  npm install --save-dev babel-core babel-loader babel-preset-es2015 babel-preset-react
+  npm install --save-dev babel-core babel-loader@7 babel-preset-es2015 babel-preset-react
+  
+# 学习是使用的是webpack4.x版本，按照教程操作报错，查找问题提示在 babel-loader@7
+  ```
+  
+* 配置
+
+  ```javascript
+  {
+      test: /\.(jsx|js)$/,
+      use: [
+         {
+            loader: 'babel-loader',
+            options: {
+               presets: ["es2015", "react"]
+            }
+          }
+       ],
+       exclude: /node_modules/
+  },
   ```
 
   
