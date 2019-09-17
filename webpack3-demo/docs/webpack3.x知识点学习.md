@@ -203,3 +203,49 @@
     },
   }
   ```
+
+## 第11节：CSS进阶：Less文件的打包和分离
+
+* 下载依赖：
+
+  ```bash
+  npm install --save-dev less less-loader
+  ```
+
+* 配置：
+
+  ```javascript
+  
+    // 模块：例如解读CSS,图片如何转换，压缩
+    module: {
+      rules: [
+        {
+          test: /\.less$/,
+          use: [
+            {
+              loader: 'style-loader'  // creates style nodes from JS strings
+            },
+            {
+              loader: 'css-loader'  // translates CSS into CommonJS
+            },
+            {
+              loader: 'less-loader'  // compiles Less to CSS
+            }
+          ]
+        }
+      ]
+    },
+    // 插件，用于生产模版和各项功能
+    plugins: [
+      // 抽取 less /css/index.css是分离后的路径位置
+      new MiniCssExtractPlugin({
+        filename: 'css/[name].less',
+        chunkFilename: '[id].less',
+        ignoreOrder: false // Enable to remove warnings about conflicting order
+      })
+    ],
+  
+  
+  ```
+
+  
