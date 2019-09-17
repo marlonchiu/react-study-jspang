@@ -119,3 +119,58 @@
   简答地说，url-loader封装了file-loader。url-loader不依赖于file-loader，即使用url-loader时，只需要安装url-loader即可，不需要安装file-loader，因为url-loader内置了file-loader。通过上面的介绍，我们可以看到，url-loader工作分两种情况：
   1.文件大小小于limit参数，url-loader将会把文件转为DataURL（Base64格式）；
   2.文件大小大于limit，url-loader会调用file-loader进行处理，参数也会直接传给file-loader。
+
+## 第09节：图片迈坑：CSS分离与图片路径处理
+
+* 本节目标
+  * 第一个是把CSS从JavasScript代码中分离出来，
+  * 第二个是如何处理分离出来后CSS中的图片路径不对问题
+
+* 下载依赖
+
+  ```bash
+  npm install --save-dev extract-text-webpack-plugin
+  
+  # 这个插件就可以完美的解决我们提取CSS的需求，但是webpack官方其实并不建议这样作，他们认为CSS就应该打包到JavasScript当中以减少http的请求数。但现实中的需求往往不是我们前端能控制的，有些需求是我们不能控制的，分离CSS就是这样一个既合理由不合理的需求
+  ```
+
+* **注意**Since webpack v4 the `extract-text-webpack-plugin` should not be used for css. Use [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) instead.
+
+* 下载依赖： `npm install --save-dev mini-css-extract-plugin`
+
+* 配置操作
+
+  ```javascript
+  const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+  
+  module.exports = {
+    plugins: [
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // all options are optional
+        filename: '[name].css',
+        chunkFilename: '[id].css',
+        ignoreOrder: false, // Enable to remove warnings about conflicting order
+      }),
+    ],
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                // you can specify a publicPath here
+                // by default it uses publicPath in webpackOptions.output
+                publicPath: '../',
+                hmr: process.env.NODE_ENV === 'development',
+              },
+            },
+            'css-loader',
+          ],
+        },
+      ],
+    },
+  };
+  ```

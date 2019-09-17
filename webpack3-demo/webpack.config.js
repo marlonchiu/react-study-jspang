@@ -1,6 +1,8 @@
 const path = require('path')
 // const Uglify = require('uglifyjs-webpack-plugin')
-const htmlPlugin = require('html-webpack-plugin')
+const HtmlPlugin = require('html-webpack-plugin')
+// const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 
 module.exports = {
@@ -28,9 +30,28 @@ module.exports = {
         // or
         // loader: ['style-loader', 'css-loader']
         // or
+        // use: [
+        //   {
+        //     loader: 'style-loader'
+        //   },
+        //   {
+        //     loader: 'css-loader'
+        //   }
+        // ]
+        // or 抽取css (4.x不适用了)
+        // use: ExtractTextPlugin.extract({
+        //   fallback: 'style-loader',
+        //   use: 'css-loader'
+        // })
         use: [
           {
-            loader: 'style-loader'
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              // you can specify a publicPath here
+              // by default it uses publicPath in webpackOptions.output
+              publicPath: '../',
+              hmr: process.env.NODE_ENV === 'development',
+            }
           },
           {
             loader: 'css-loader'
@@ -54,12 +75,18 @@ module.exports = {
   plugins: [
     // 配置js压缩（webpack 4.x 默认启用js压缩）
     // new Uglify(),
-    new htmlPlugin({
+    new HtmlPlugin({
       minify: {
         removeAttributeQuotes: true
       },
       hash: true,
       template: './src/index.html'
+    }),
+    // 抽取 css /css/index.css是分离后的路径位置
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+      ignoreOrder: false // Enable to remove warnings about conflicting order
     })
   ],
   // 配置webpack开发服务功能
