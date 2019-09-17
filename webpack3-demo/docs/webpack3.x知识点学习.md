@@ -277,4 +277,12 @@
   ],
   ```
 
+## 第15节：给webpack增加babel支持
+
+* 依赖
+
+  ```bash
+  npm install --save-dev babel-core babel-loader babel-preset-es2015 babel-preset-react
+  ```
+
   

@@ -7,7 +7,7 @@ const glob = require('glob')
 const PurifyCSSPlugin = require('purifycss-webpack')
 
 var website = {
-  publicPath:"http://10.0.192.93:1717/"
+  publicPath: "http://10.0.192.93:1717/"
 }
 
 module.exports = {
@@ -29,6 +29,17 @@ module.exports = {
   // 模块：例如解读CSS,图片如何转换，压缩
   module: {
     rules: [
+      // babel
+      {
+        test: /\.(jsx|js)$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ["es2015", "react"]
+          }
+        },
+        exclude: /node_modules/
+      },
       // 处理 css(test use/loader include exclude query)
       {
         test: /\.css$/,
@@ -175,4 +186,3 @@ module.exports = {
     compress: true
   }
 }
-
