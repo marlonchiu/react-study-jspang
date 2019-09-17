@@ -6,9 +6,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const glob = require('glob')
 const PurifyCSSPlugin = require('purifycss-webpack')
 
-// 引入模块
-const entry = require('./webpack_config/entry_webpack')
-
 console.log(encodeURIComponent(process.env.type))
 var website
 if (process.env.type === 'dev') {
@@ -27,7 +24,10 @@ console.log(website)
 module.exports = {
   devtool: 'source-map',
   // 入口文件的配置项
-  entry: entry.path,
+  entry: {
+    entry: './src/entry.js',
+    // entry2: './src/entry2.js',
+  },
   // 出口文件的配置项
   output: {
     // 输出打包的路径
