@@ -244,8 +244,6 @@
         ignoreOrder: false // Enable to remove warnings about conflicting order
       })
     ],
-  
-  
   ```
 
   

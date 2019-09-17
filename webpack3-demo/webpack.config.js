@@ -94,19 +94,33 @@ module.exports = {
           }
         ]
       },
+      { // 打包scss
+        test: /\.scss$/,
+        use: [
+          {
+            loader: 'style-loader'  // creates style nodes from JS strings
+          },
+          {
+            loader: 'css-loader'  // translates CSS into CommonJS
+          },
+          {
+            loader: 'sass-loader'  // compiles Sass to CSS
+          }
+        ]
+      },
       // 分离less
-      {
-        test: /\.less$/,
-        use: ExtractTextPlugin.extract({
-            use: [{
-                loader: "css-loader"
-            }, {
-                loader: "less-loader"
-            }],
-            // use style-loader in development
-            fallback: "style-loader"
-        })
-}
+      // {
+      //   test: /\.less$/,
+      //   use: ExtractTextPlugin.extract({
+      //       use: [{
+      //           loader: "css-loader"
+      //       }, {
+      //           loader: "less-loader"
+      //       }],
+      //       // use style-loader in development
+      //       fallback: "style-loader"
+      //   })
+      // },
     ]
   },
   // 插件，用于生产模版和各项功能
