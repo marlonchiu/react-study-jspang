@@ -254,6 +254,53 @@
   ```bash
   npm install --save-dev postcss-loader autoprefixer
   ```
+  
+* `postcss.config.js`
+
+  ```javascript
+  // https://www.cnblogs.com/hellowoeld/p/10571792.html
+  
+  module.exports = {
+    plugins: [
+      require('autoprefixer')({
+        "browsers": [
+          "defaults",
+          "not ie < 11",
+          "last 2 versions",
+          "> 1%",
+          "iOS 7",
+          "last 3 iOS versions"
+        ]
+      })
+    ]
+  }
+  ```
+
+* 配置
+
+  ```javascript
+  {
+    test: /\.css$/,
+    use: [
+      {
+        loader: MiniCssExtractPlugin.loader,
+        options: {
+          // you can specify a publicPath here
+          // by default it uses publicPath in webpackOptions.output
+          publicPath: '../',
+          // hmr: process.env.NODE_ENV === 'development',
+        }
+      },
+      {
+        loader: 'css-loader',
+        options: {
+          importLoaders: 1
+        }
+      },
+      'postcss-loader'
+    ]
+  },
+  ```
 
 ## 第14节：CSS进阶：消除未使用的CSS
 
@@ -285,7 +332,7 @@
   ```bash
   npm install --save-dev babel-core babel-loader@7 babel-preset-es2015 babel-preset-react
   
-# 学习是使用的是webpack4.x版本，按照教程操作报错，查找问题提示在 babel-loader@7
+  # 学习是使用的是webpack4.x版本，按照教程操作报错，查找问题提示在 babel-loader@7
   ```
   
 * 配置
@@ -314,3 +361,4 @@
   * `cheap-module-source-map`:在一个单独的文件中产生一个不带列映射的map，不带列映射提高了打包速度，但是也使得浏览器开发者工具只能对应到具体的行，不能对应到具体的列（符号）,会对调试造成不便。
   * `eval-source-map`:使用eval打包源文件模块，在同一个文件中生产干净的完整版的sourcemap，但是对打包后输出的JS文件的执行具有性能和安全的隐患。在**开发阶段**这是一个非常好的选项，在生产阶段则一定要不开启这个选项。
   * `cheap-module-eval-source-map`:这是在打包文件时最快的生产source map的方法，生产的 Source map 会和打包后的JavaScript文件同行显示，没有影射列，和eval-source-map选项具有相似的缺点。
+  

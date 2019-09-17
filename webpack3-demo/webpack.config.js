@@ -11,7 +11,7 @@ var website = {
 }
 
 module.exports = {
-  devtool: 'eval-source-map',
+  devtool: 'source-map',
   // 入口文件的配置项
   entry: {
     entry: './src/entry.js',
