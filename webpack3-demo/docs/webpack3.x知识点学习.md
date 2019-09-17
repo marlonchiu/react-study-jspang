@@ -426,3 +426,7 @@
         "build": "export type=build&&webpack"
     },
     ```
+
+## 第18节：实战技巧：webpack模块化配置
+
+## 第19节：实战技巧：优雅打包第三方类库
