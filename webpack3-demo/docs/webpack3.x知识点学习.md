@@ -174,3 +174,32 @@
     },
   };
   ```
+
+## 第10节：图片迈坑：处理HTML中的图片
+
+* 解决的问题就是在hmtl文件中引入`img`标签的问题
+
+* 下载依赖
+
+  ```bash
+  npm install html-withimg-loader --save
+  ```
+
+* 配置
+
+  ```javascript
+  // webpack.config.js(注意一下图片大小，压缩限制)
+  
+  module.exports = {
+  
+    // 模块：例如解读CSS,图片如何转换，压缩
+    module: {
+      rules: [
+        {
+          test: /\.(htm|html)$/i,
+          use: ['html-withing-loader']
+        }
+      ]
+    },
+  }
+  ```

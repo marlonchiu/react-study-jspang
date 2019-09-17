@@ -4,6 +4,9 @@ const HtmlPlugin = require('html-webpack-plugin')
 // const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
+var website = {
+  publicPath:"http://10.0.192.93:1717/"
+}
 
 module.exports = {
   // 入口文件的配置项
@@ -17,7 +20,9 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     // 打包的文件名称
     // filename:'bundle.js'
-    filename:'[name].js'
+    filename: '[name].js',
+    // 可以解决图片路径异常的问题
+    // publicPath: website.publicPath
   },
   // 模块：例如解读CSS,图片如何转换，压缩
   module: {
@@ -50,7 +55,7 @@ module.exports = {
               // you can specify a publicPath here
               // by default it uses publicPath in webpackOptions.output
               publicPath: '../',
-              hmr: process.env.NODE_ENV === 'development',
+              // hmr: process.env.NODE_ENV === 'development',
             }
           },
           {
@@ -64,10 +69,16 @@ module.exports = {
           {
             loader: 'url-loader',
             options: {
-              limit: 10 * 1024  // 100kb以下的会被base64
+              limit: 5 * 1024,  // 100kb以下的会被base64
+              // 图片输出路径到image文件夹
+              outputPath: 'images/'
             }
           }
         ]
+      },
+      {
+        test: /\.(htm|html)$/i,
+        use: ['html-withimg-loader']
       }
     ]
   },
@@ -84,7 +95,7 @@ module.exports = {
     }),
     // 抽取 css /css/index.css是分离后的路径位置
     new MiniCssExtractPlugin({
-      filename: '[name].css',
+      filename: 'css/[name].css',
       chunkFilename: '[id].css',
       ignoreOrder: false // Enable to remove warnings about conflicting order
     })
