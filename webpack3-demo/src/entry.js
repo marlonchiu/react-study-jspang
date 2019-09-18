@@ -12,3 +12,6 @@ import $ from 'jquery'
 hello()
 
 $('#webpack').html('hello Webpack')
+
+var json = require('./json/config.json')
+document.getElementById("json").innerHTML= json.name

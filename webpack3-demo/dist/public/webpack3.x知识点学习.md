@@ -524,3 +524,29 @@
 
   // webpack.optimize.CommonsChunkPlugin已经移除
   ```
+
+## 第22节：实战技巧：静态资源集中输出
+
+* 下载依赖
+
+  ```bash
+  npm install --save-dev copy-webpack-plugin
+  ```
+
+* 配置
+
+  ```javascript
+  const copyPlugin= require('copy-webpack-plugin')
+  
+  // plugins下增加
+  
+  new copyPlugin([
+      {
+          from: __dirname + '/docs',  // from:要打包的静态资源目录地址，这里的__dirname是指项目目录下
+          to: './public'  // to:要打包到的文件夹路径，跟随output配置中的目录。所以不需要再自己加__dirname
+      }
+  ])
+  
+  // from:要打包的静态资源目录地址，这里的__dirname是指项目目录下，是node的一种语法，可以直接定位到本机的项目目录中。
+  // to:要打包到的文件夹路径，跟随output配置中的目录。所以不需要再自己加__dirname。
+  ```
