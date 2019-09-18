@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const glob = require('glob')
 const PurifyCSSPlugin = require('purifycss-webpack')
 const webpack = require('webpack')
+const copyPlugin= require('copy-webpack-plugin')
 
 // 引入模块
 // const entry = require('./webpack_config/entry_webpack')
@@ -207,6 +208,12 @@ module.exports = {
     //   // 最小打包的文件模块数，这里直接写2就好
     //   minChunks: 2
     // })
+    new copyPlugin([
+      {
+        from: __dirname + '/docs',  // from:要打包的静态资源目录地址，这里的__dirname是指项目目录下
+        to: './public'  // to:要打包到的文件夹路径，跟随output配置中的目录。所以不需要再自己加__dirname
+      }
+    ])
   ],
   // 打包拆分  https://webpack.js.org/plugins/split-chunks-plugin/
   optimization: {
