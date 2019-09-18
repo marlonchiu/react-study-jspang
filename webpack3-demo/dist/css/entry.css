@@ -1,3 +1,4 @@
+/*! JSPang版权所有，看官方免费视频到jspang.com收看 */
 body {
   background: #faf;
   color: white;
@@ -15,7 +16,7 @@ body {
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-shadow: 1px 1px 0 rgba(0,0,0,.25);
-  box-shadow: 1px 1px 0 rgba(0,0,0,.25);
+  -webkit-box-shadow: 1px 1px 0 rgba(0,0,0,.5);
+  box-shadow: 1px 1px 0 rgba(0,0,0,.5);
 }
 /*# sourceMappingURL=entry.css.map*/

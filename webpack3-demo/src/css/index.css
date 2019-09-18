@@ -10,7 +10,7 @@ body{
   height: 308px;
   transform: rotate(45deg);
   display: flex;
-  box-shadow: 1px 1px 0 rgba(0,0,0,.25)
+  box-shadow: 1px 1px 0 rgba(0,0,0,.5)
 }
 
 #hahha{

@@ -457,3 +457,36 @@
       })
     ],
   ```
+
+## 第20节：实战技巧：watch的正确使用方法
+
+* 直接使用`webpack-dev-server`
+
+* 项目命令行`webpack --watch`
+
+* 监视的配置项
+
+  ```javascript
+  // 监视的配置项
+    watchOptions: {
+      // 检测修改的时间，以毫秒为单位
+      poll: 1000,
+      // 防止重复保存而发生重复编译错误。这里设置的500是半秒内重复保存，不进行打包操作
+      aggregateTimeout: 500,
+      // 不监听的目录
+      ignored: /node_modules/,
+    }
+  ```
+
+* 增加打包时的注释
+
+  ```javascript
+  const webpack = require('webpack')
+  
+  plugins: [
+      // 增加打包注释
+      new webpack.BannerPlugin('JSPang版权所有，看官方免费视频到jspang.com收看')
+    ],
+
+  // webpack --watch 查看 dist/entry.js
+  ```

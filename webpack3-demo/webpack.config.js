@@ -191,7 +191,9 @@ module.exports = {
     // 引入第三方库
     new webpack.ProvidePlugin({
       $: 'jquery'
-    })
+    }),
+    // 增加打包注释
+    new webpack.BannerPlugin('JSPang版权所有，看官方免费视频到jspang.com收看')
   ],
   // 配置webpack开发服务功能
   devServer: {
@@ -203,5 +205,14 @@ module.exports = {
     port: 1717,
     // 服务端是否开启压缩
     compress: true
+  },
+  // 监视的配置项
+  watchOptions: {
+    // 检测修改的时间，以毫秒为单位
+    poll: 1000,
+    // 防止重复保存而发生重复编译错误。这里设置的500是半秒内重复保存，不进行打包操作
+    aggregateTimeout: 500,
+    // 不监听的目录
+    ignored: /node_modules/,
   }
 }
