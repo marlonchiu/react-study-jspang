@@ -5,11 +5,12 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const glob = require('glob')
 const PurifyCSSPlugin = require('purifycss-webpack')
+const webpack = require('webpack')
 
 // 引入模块
 const entry = require('./webpack_config/entry_webpack')
 
-console.log(encodeURIComponent(process.env.type))
+// console.log(encodeURIComponent(process.env.type))
 var website
 if (process.env.type === 'dev') {
   website = {
@@ -20,7 +21,7 @@ if (process.env.type === 'dev') {
     publicPath: "http://cdn.jspang.com/"
   }
 }
-console.log(website)
+// console.log(website)
 
 
 
@@ -186,6 +187,10 @@ module.exports = {
     // 消除未使用的css
     new PurifyCSSPlugin({
       paths: glob.sync(path.join(__dirname,'src/*.html'))
+    }),
+    // 引入第三方库
+    new webpack.ProvidePlugin({
+      $: 'jquery'
     })
   ],
   // 配置webpack开发服务功能

@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "babel-preset-env": "^1.7.0",
-    "html-withimg-loader": "^0.1.16"
+    "html-withimg-loader": "^0.1.16",
+    "jquery": "^3.4.1"
   }
 }

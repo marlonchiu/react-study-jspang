@@ -430,3 +430,30 @@
 ## 第18节：实战技巧：webpack模块化配置
 
 ## 第19节：实战技巧：优雅打包第三方类库
+
+* 直接在入口处使用
+
+  ```javascript
+  // entry.js
+  
+  // 引入
+  import $ from 'jquery';
+  
+  // 使用
+  $('#webpack').html('hello Webpack')
+  ```
+
+* 配置webpack
+
+  ProvidePlugin是一个webpack自带的插件，Provide的意思就是装备、提供。因为ProvidePlugin是webpack自带的插件，所以要先再webpack.config.js中引入webpack.
+
+  ```javascript
+  const webpack = require('webpack')
+  
+  plugins: [
+      // 引入第三方库
+      new webpack.ProvidePlugin({
+        $: 'jquery'
+      })
+    ],
+  ```
