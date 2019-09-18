@@ -490,3 +490,37 @@
 
   // webpack --watch 查看 dist/entry.js
   ```
+
+## 第21节：实战技巧：webpack优化黑技能
+
+* **ProvidePlugin和import**
+  * 在第19节中如何引入第三方类库，并引入了jquery，在引用JQuery时我们用了两种方法，第一种时import，第二种时使用ProvidePlugin插件。那两种引入方法有什么区别那?
+  * `import`引入方法：引用后不管你在代码中使用不使用该类库，都会把该类库打包起来，这样有时就会让代码产生冗余。
+  * `ProvidePlugin`引入方法：引用后只有在类库使用时，才按需进行打包，所以建议在工作使用插件的方式进行引入。 具体的对比操作，你会看出两种引入方法的对比打包结果。差距还是蛮大
+
+* **抽离JQuery**
+
+  ```javascript
+  entry: {
+      entry: './src/entry.js',
+      jquery: 'jquery',
+      vue: 'vue'
+    },
+
+   // 打包拆分  https://webpack.js.org/plugins/split-chunks-plugin/
+    optimization: {
+      splitChunks: {
+        minChunks: 2,
+        cacheGroups: {
+          jquery: {
+            name: 'jquery'
+          },
+          vue: {
+            name: 'vue',
+          }
+        }
+      }
+    },  
+
+  // webpack.optimize.CommonsChunkPlugin已经移除
+  ```

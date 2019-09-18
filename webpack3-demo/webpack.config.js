@@ -8,7 +8,7 @@ const PurifyCSSPlugin = require('purifycss-webpack')
 const webpack = require('webpack')
 
 // 引入模块
-const entry = require('./webpack_config/entry_webpack')
+// const entry = require('./webpack_config/entry_webpack')
 
 // console.log(encodeURIComponent(process.env.type))
 var website
@@ -26,9 +26,13 @@ if (process.env.type === 'dev') {
 
 
 module.exports = {
-  devtool: 'source-map',
+  devtool: 'eval-source-map',
   // 入口文件的配置项
-  entry: entry.path,
+  entry: {
+    entry: './src/entry.js',
+    jquery: 'jquery',
+    vue: 'vue'
+  },
   // 出口文件的配置项
   output: {
     // 输出打包的路径
@@ -193,8 +197,31 @@ module.exports = {
       $: 'jquery'
     }),
     // 增加打包注释
-    new webpack.BannerPlugin('JSPang版权所有，看官方免费视频到jspang.com收看')
+    new webpack.BannerPlugin('JSPang版权所有，看官方免费视频到jspang.com收看'),
+    // webpack.optimize.CommonsChunkPlugin已经移除
+    // new webpack.optimize.CommonsChunkPlugin({
+    //   // name对应入口文件中的名字，我们起的是jQuery
+    //   name: 'jQuery',
+    //   // 把文件打包到哪里，是一个路径
+    //   filename: "assets/js/jquery.min.js",
+    //   // 最小打包的文件模块数，这里直接写2就好
+    //   minChunks: 2
+    // })
   ],
+  // 打包拆分  https://webpack.js.org/plugins/split-chunks-plugin/
+  optimization: {
+    splitChunks: {
+      minChunks: 2,
+      cacheGroups: {
+        jquery: {
+          name: 'jquery'
+        },
+        vue: {
+          name: 'vue',
+        }
+      }
+    }
+  },
   // 配置webpack开发服务功能
   devServer: {
     // 配置服务器基本运行路径，用于找到程序打包地址
