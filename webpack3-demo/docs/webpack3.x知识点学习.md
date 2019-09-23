@@ -5,6 +5,7 @@
 * [Webpack3.X版 成神之路 (共24集)](https://jspang.com/posts/2017/09/16/webpack3.html)
 * [入门 Webpack，看这篇就够了](https://segmentfault.com/a/1190000006178770)
 * [官方文档](https://www.webpackjs.com/concepts/)
+* [官方文档 英文](https://webpack.js.org/)
 * [webpack4系列教程](https://www.jianshu.com/p/46d09ac4c8f2)
 
 ## 其他知识
@@ -375,7 +376,6 @@
   ```bash
   # 安装全部项目依赖包：
   npm install
-   
   # 安装生产环境依赖包：
   npm install --production
   ```
@@ -549,4 +549,98 @@
   
   // from:要打包的静态资源目录地址，这里的__dirname是指项目目录下，是node的一种语法，可以直接定位到本机的项目目录中。
   // to:要打包到的文件夹路径，跟随output配置中的目录。所以不需要再自己加__dirname。
+  ```
+
+## 第24节：配置React开发环境
+
+* 下载的依赖
+
+  ```bash
+  npm install --save-dev webpack webpack-dev-server
+  npm install --save-dev babel-core babel-loader@7 babel-preset-es2015 babel-preset-react
+  npm install --save react react-dom
+  ```
+
+* 最终`webpack.config.js`配置 
+
+  ```javascript
+  const path  = require('path')
+  module.exports = {
+    entry: {
+      entry: './app/entry.js',
+    },
+    output: {
+      filename: 'index.js',
+      // 输出打包的路径
+      path: path.resolve(__dirname, 'dist'),
+      // 配置实现内存更新
+      publicPath: 'temp/'
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx)$/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets:[
+                "es2015","react"
+              ]
+            }
+          },
+          exclude:/node_modules/
+        }
+      ]
+    },
+    // 配置webpack开发服务功能
+    devServer: {
+      // 配置服务器基本运行路径，用于找到程序打包地址
+      // contentBase: path.resolve(__dirname, 'dist'),
+      contentBase:'./',
+      // 服务器的IP地址，可以使用IP也可以使用localhost
+      host: 'localhost',
+      port: 3456,
+      compress: true
+    }
+  }
+  ```
+
+* 入口文件`app/entry.js`
+
+  ```javascript
+  // function component() {
+  //   var ele = document.createElement('div')
+  //   ele.innerHTML = "React Webpack Jspang"
+  //   return ele
+  // }
+  
+  // document.body.appendChild(component())
+  
+  import React from 'react'
+  import ReactDOM from 'react-dom'
+  
+  ReactDOM.render(
+    <div>
+      React Webpack So Cool!
+    </div>,
+    document.getElementById('app')
+  )
+  ```
+
+* 页面`index.html` 页面
+
+  ```html
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>React webpack 全家桶配置</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="./temp/index.js"></script>
+  </body>
+  </html>
   ```
