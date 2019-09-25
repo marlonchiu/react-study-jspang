@@ -2,7 +2,7 @@ import Head from 'next/head'
 // import Myheader from '../components/myheader'
 import {Button} from 'antd'
 // Next.js默认是不支持CSS样式引入的
-import '../static/test.css'
+// import '../static/test.css'
 
 function Header() {
   return (
