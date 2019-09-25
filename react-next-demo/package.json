@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "next",
     "build": "next build",
-    "start": "next start -p 80"
+    "start": "next start -p 8000"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "babel-plugin-import": "^1.12.2",
     "moment": "^2.24.0",
     "next": "^9.0.6",
+    "null-loader": "^3.0.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
   }

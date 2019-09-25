@@ -71,6 +71,13 @@ const Home = () => {
       <div>
         <Link href="#jspang"><a>选JSPang</a></Link>
       </div>
+      <style jsx global>
+        {`
+          a:hover{
+            text-decoration: underline;
+          }
+        `}
+      </style>
     </>
   ) 
 }
